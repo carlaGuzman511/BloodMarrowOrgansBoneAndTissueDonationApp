@@ -411,3 +411,16 @@ FodyWeavers.xsd
 
 ## ignore devtools config
 Apps/web/libraries/devtools/src/config.ts
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# .NET build
+bin/
+obj/
+
+# Other common
+*.log
+*.cache
