@@ -1,0 +1,117 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4E6FF80F-0711-4D1A-9921-4070FC9636AB}|Umss.DonationApp.Infrastructure\\Umss.DonationApp.Infrastructure.csproj|c:\\users\\asus\\source\\repos\\test\\finalprojectumss\\2025\\bloodmarroworgansboneandtissuedonationapp\\apps\\api\\umss.donationapp\\umss.donationapp.infrastructure\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4E6FF80F-0711-4D1A-9921-4070FC9636AB}|Umss.DonationApp.Infrastructure\\Umss.DonationApp.Infrastructure.csproj|solutionrelative:umss.donationapp.infrastructure\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E12978E-E7AB-40E6-B883-EBB48B38F93E}|Umss.DonationApp.Services.Tests\\Umss.DonationApp.Services.Tests.csproj|c:\\users\\asus\\source\\repos\\test\\finalprojectumss\\2025\\bloodmarroworgansboneandtissuedonationapp\\apps\\api\\umss.donationapp\\umss.donationapp.services.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E12978E-E7AB-40E6-B883-EBB48B38F93E}|Umss.DonationApp.Services.Tests\\Umss.DonationApp.Services.Tests.csproj|solutionrelative:umss.donationapp.services.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19C90580-C75C-4E83-BD45-EE984C3184EF}|Umss.DonationApp.Services\\Umss.DonationApp.Services.csproj|c:\\users\\asus\\source\\repos\\test\\finalprojectumss\\2025\\bloodmarroworgansboneandtissuedonationapp\\apps\\api\\umss.donationapp\\umss.donationapp.services\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19C90580-C75C-4E83-BD45-EE984C3184EF}|Umss.DonationApp.Services\\Umss.DonationApp.Services.csproj|solutionrelative:umss.donationapp.services\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACEAC780-3CC1-435B-8F9F-1B0087EED022}|Umss.DonationApp.Domain.Tests\\Umss.DonationApp.Domain.Tests.csproj|c:\\users\\asus\\source\\repos\\test\\finalprojectumss\\2025\\bloodmarroworgansboneandtissuedonationapp\\apps\\api\\umss.donationapp\\umss.donationapp.domain.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACEAC780-3CC1-435B-8F9F-1B0087EED022}|Umss.DonationApp.Domain.Tests\\Umss.DonationApp.Domain.Tests.csproj|solutionrelative:umss.donationapp.domain.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{675256C5-384F-4D25-A47F-1366ADE55763}|Umss.DonationApp.Domain\\Umss.DonationApp.Domain.csproj|c:\\users\\asus\\source\\repos\\test\\finalprojectumss\\2025\\bloodmarroworgansboneandtissuedonationapp\\apps\\api\\umss.donationapp\\umss.donationapp.domain\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{675256C5-384F-4D25-A47F-1366ADE55763}|Umss.DonationApp.Domain\\Umss.DonationApp.Domain.csproj|solutionrelative:umss.donationapp.domain\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B80AE94A-67B3-4D9F-A125-ECEACB75ABDC}|Umss.DonationApp.API.Tests\\Umss.DonationApp.API.Tests.csproj|c:\\users\\asus\\source\\repos\\test\\finalprojectumss\\2025\\bloodmarroworgansboneandtissuedonationapp\\apps\\api\\umss.donationapp\\umss.donationapp.api.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B80AE94A-67B3-4D9F-A125-ECEACB75ABDC}|Umss.DonationApp.API.Tests\\Umss.DonationApp.API.Tests.csproj|solutionrelative:umss.donationapp.api.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Infrastructure\\Class1.cs",
+              "RelativeDocumentMoniker": "Umss.DonationApp.Infrastructure\\Class1.cs",
+              "ToolTip": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Infrastructure\\Class1.cs",
+              "RelativeToolTip": "Umss.DonationApp.Infrastructure\\Class1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T20:48:29.192Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Services.Tests\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "Umss.DonationApp.Services.Tests\\UnitTest1.cs",
+              "ToolTip": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Services.Tests\\UnitTest1.cs",
+              "RelativeToolTip": "Umss.DonationApp.Services.Tests\\UnitTest1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T20:47:53.939Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Services\\Class1.cs",
+              "RelativeDocumentMoniker": "Umss.DonationApp.Services\\Class1.cs",
+              "ToolTip": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Services\\Class1.cs",
+              "RelativeToolTip": "Umss.DonationApp.Services\\Class1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T20:47:20.668Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Domain.Tests\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "Umss.DonationApp.Domain.Tests\\UnitTest1.cs",
+              "ToolTip": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Domain.Tests\\UnitTest1.cs",
+              "RelativeToolTip": "Umss.DonationApp.Domain.Tests\\UnitTest1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T20:46:38.595Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Domain\\Class1.cs",
+              "RelativeDocumentMoniker": "Umss.DonationApp.Domain\\Class1.cs",
+              "ToolTip": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.Domain\\Class1.cs",
+              "RelativeToolTip": "Umss.DonationApp.Domain\\Class1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T20:46:17.062Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.API.Tests\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "Umss.DonationApp.API.Tests\\UnitTest1.cs",
+              "ToolTip": "C:\\Users\\Asus\\source\\repos\\test\\FinalProjectUmss\\2025\\BloodMarrowOrgansBoneAndTissueDonationApp\\Apps\\api\\Umss.DonationApp\\Umss.DonationApp.API.Tests\\UnitTest1.cs",
+              "RelativeToolTip": "Umss.DonationApp.API.Tests\\UnitTest1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-05T20:45:43.146Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
