@@ -1,13 +1,16 @@
 import { Text, View } from "react-native";
 
 import Profile from '@/screens/Profile';
-import DonationRequest from '@/screens/DonationRequest';
+// import DonationRequest from '@/screens/DonationRequest';
 import Report from '@/screens/Report';
 import Search from '@/screens/Search';
 import Home from '@/screens/Home';
 import DonorCardDetails from '@/components/DonorCardDetails';
 import { NativeViewGestureHandler } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import GetStarted from '@/screens/GetStarted';
+import { Login } from "@/screens";
+import Register from '@/screens/Register';
 
 export default function Index() {
   return (
@@ -19,12 +22,15 @@ export default function Index() {
           alignItems: "center",
         }}
       >
-        <Home/>
+        {/* <Home/> */}
         {/* <DonationRequest/> */}
         {/* <Search/> */}
 
         {/* <Profile/> */}
         {/* <Report/> */}
+        {/* <GetStarted/> */}
+        {/* <Login/> */}
+        <Register/>
       </View>
     </GestureHandlerRootView>
   );

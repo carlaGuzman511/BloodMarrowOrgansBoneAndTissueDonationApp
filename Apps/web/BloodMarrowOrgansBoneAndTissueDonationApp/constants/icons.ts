@@ -66,6 +66,7 @@ const icons = {
     organDonation1Icon: require("@/assets/icons/organ-donation (1).png"),
     organDonationIcon: require("@/assets/icons/organ-donation.png"),
     kidneyDonorIcon: require("@/assets/icons/kidney-donor.png"),
+    greenBowWorldIcon: require("@/assets/icons/green-bow-world.png"),
 }
 
 export default icons;
