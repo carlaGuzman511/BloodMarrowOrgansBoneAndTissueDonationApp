@@ -12,16 +12,19 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <ProjectReference Include="..\Umss.BloodOrgansDonationApp.API.Tests\Umss.BloodOrgansDonationApp.API.Tests.csproj" />
+    <ProjectReference Include="..\Umss.BloodOrgansDonationApp.Repository\Umss.BloodOrgansDonationApp.Repository.csproj" />
+    <ProjectReference Include="..\Umss.BloodOrgansDonationApp.Services\Umss.BloodOrgansDonationApp.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>
