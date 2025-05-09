@@ -1,73 +1,139 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Validators;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
-    public class DonationPostService : IDonationPostService
+    public class DonationPostService : IDonationPostService<DonationPostRequest, DonationPostResponse>
     {
-        private readonly IDonationPostRepository _donationPostRepository;
+        private readonly IDonationPostRepository<DonationPost> _donationPostRepository;
         private readonly IMapper _mapper;
-        public DonationPostService(IDonationPostRepository donationPostRepository, IMapper mapper)
+        public DonationPostService(IDonationPostRepository<DonationPost> donationPostRepository, IMapper mapper)
         {
             _donationPostRepository = donationPostRepository;
             _mapper = mapper;
         }
-        public async Task<DonationPost> Create(DonationPostRequest donationPostRequest)
+        public async Task<DonationPostResponse> CreateByDonationCenter(Guid donationCenterId, DonationPostRequest donationPostRequest)
         {
             DonationPostRequestValidator donationPostRequestValidator = new DonationPostRequestValidator();
-            donationPostRequestValidator.Validate(donationPostRequest);
+            donationPostRequestValidator.ValidateAndThrow(donationPostRequest);
 
             DonationPost donationPost = _mapper.Map<DonationPost>(donationPostRequest);
+            donationPost.CreatedAt = DateTime.Now;
             donationPost.Id = Guid.NewGuid();
+            donationPost.DonationCenterId = donationCenterId;
 
-            return await _donationPostRepository.Create(donationPost);
+            donationPost = await _donationPostRepository.Create(donationPost);
+
+            return _mapper.Map<DonationPostResponse>(donationPost);
         }
-
-        public async Task Delete(Guid id)
+        public async Task<DonationPostResponse> CreateByUser(Guid userId, DonationPostRequest donationPostRequest)
         {
-            await _donationPostRepository.Delete(id);
+            DonationPostRequestValidator donationPostRequestValidator = new DonationPostRequestValidator();
+            donationPostRequestValidator.ValidateAndThrow(donationPostRequest);
+
+            DonationPost donationPost = _mapper.Map<DonationPost>(donationPostRequest);
+            donationPost.CreatedAt = DateTime.Now;
+            donationPost.Id = Guid.NewGuid();
+            donationPost.UserId = userId;
+
+            donationPost = await _donationPostRepository.Create(donationPost);
+
+            return _mapper.Map<DonationPostResponse>(donationPost);
         }
-
-        public async Task<DonationPost?> Get(Guid id)
+        public async Task DeleteByUser(Guid userId, Guid donationPostId)
         {
-            DonationPost? donationPost = await _donationPostRepository.Get(id);
+            await _donationPostRepository.DeleteByUser(userId, donationPostId);
+        }
+        public async Task DeleteByDonationCenter(Guid donationCenterId, Guid donationPostId)
+        {
+            await _donationPostRepository.DeleteByDonationCenter(donationCenterId, donationPostId);
+        }
+        public async Task<DonationPostResponse?> GetByUser(Guid userId, Guid donationPostId)
+        {
+            DonationPost? donationPost = await _donationPostRepository.GetByUser(userId, donationPostId);
             if (donationPost != null)
             {
-                return donationPost;
+                return _mapper.Map<DonationPostResponse>(donationPost);
             }
             else
             {
                 return null;
             }
         }
-
-        public async Task<IEnumerable<DonationPost>> GetAll()
+        public async Task<DonationPostResponse?> GetByDonationCenter(Guid donationCenterId, Guid donationPostId)
         {
-            var donationPosts = await _donationPostRepository.GetAll();
-
-            return donationPosts;
+            DonationPost? donationPost = await _donationPostRepository.GetByDonationCenter(donationCenterId, donationPostId);
+            if (donationPost != null)
+            {
+                return _mapper.Map<DonationPostResponse>(donationPost);
+            }
+            else
+            {
+                return null;
+            }
         }
-
-        public async Task<DonationPost> Update(Guid id, DonationPostRequest donationPostRequest)
+        public async Task<IEnumerable<DonationPostResponse>> GetByDonationCenter(Guid donationCenterId)
         {
-            DonationPost? donationPost = await _donationPostRepository.Get(id);
+            IEnumerable<DonationPost> donationPosts = await _donationPostRepository.GetByDonationCenter(donationCenterId);
+            IEnumerable<DonationPostResponse> response = donationPosts.Select(dp => _mapper.Map<DonationPostResponse>(dp));
+
+            return response;
+        }
+        public async Task<IEnumerable<DonationPostResponse>> GetByUser(Guid userId)
+        {
+            IEnumerable<DonationPost> donationPosts = await _donationPostRepository.GetByUser(userId);
+            IEnumerable<DonationPostResponse> response = donationPosts.Select(dp => _mapper.Map<DonationPostResponse>(dp));
+
+            return response;
+        }
+        public async Task<DonationPostResponse> UpdateByUser(Guid userId, Guid donationPostId, DonationPostRequest donationPostRequest)
+        {
+            DonationPost? donationPost = await _donationPostRepository.GetByUser(userId, donationPostId);
             if(donationPost == null)
             {
-                throw new EntityNotFoundException($"Donation Post with ID {id} not found.");
+                throw new EntityNotFoundException($"Donation Post with ID {donationPostId} not found.");
             }
 
             DonationPostRequestValidator donationPostRequestValidator = new DonationPostRequestValidator();
-            donationPostRequestValidator.Validate(donationPostRequest);
+            donationPostRequestValidator.ValidateAndThrow(donationPostRequest);
 
             _mapper.Map(donationPostRequest, donationPost);
-            donationPost.Id = id;
+
+            donationPost.Id = donationPostId;
+            donationPost.UserId = userId;
+            donationPost.UpdatedAt = DateTime.Now;
                
-            return await _donationPostRepository.Update(donationPost);
+            await _donationPostRepository.Update(donationPost);
+
+            return _mapper.Map<DonationPostResponse>(donationPost);
+        }
+        public async Task<DonationPostResponse> UpdateByDonationCenter(Guid donationCenterId, Guid donationPostId, DonationPostRequest donationPostRequest)
+        {
+            DonationPost? donationPost = await _donationPostRepository.GetByDonationCenter(donationCenterId, donationPostId);
+            if (donationPost == null)
+            {
+                throw new EntityNotFoundException($"Donation Post with ID {donationPostId} not found.");
+            }
+
+            DonationPostRequestValidator donationPostRequestValidator = new DonationPostRequestValidator();
+            donationPostRequestValidator.ValidateAndThrow(donationPostRequest);
+
+            _mapper.Map(donationPostRequest, donationPost);
+
+            donationPost.Id = donationPostId;
+            donationPost.DonationCenterId = donationCenterId;
+            donationPost.UpdatedAt = DateTime.Now;
+
+            await _donationPostRepository.Update(donationPost);
+
+            return _mapper.Map<DonationPostResponse>(donationPost);
         }
     }
 }

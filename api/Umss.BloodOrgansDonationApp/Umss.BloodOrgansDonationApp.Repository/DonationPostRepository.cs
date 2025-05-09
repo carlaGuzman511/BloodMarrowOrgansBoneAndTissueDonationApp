@@ -4,7 +4,7 @@ using Umss.BloodOrgansDonationApp.Models;
 
 namespace Umss.BloodOrgansDonationApp.Repository
 {
-    public class DonationPostRepository : IDonationPostRepository
+    public class DonationPostRepository : IDonationPostRepository<DonationPost>
     {
         private readonly DonationAppContext _appContext;
 
@@ -12,37 +12,56 @@ namespace Umss.BloodOrgansDonationApp.Repository
         {
             _appContext = appContext;
         }
-        public async Task<DonationPost> Create(DonationPost element)
+        public async Task<DonationPost> Create(DonationPost donationPost)
         {
-            await _appContext.AddAsync(element);
+            await _appContext.AddAsync(donationPost);
             await _appContext.SaveChangesAsync();
-            return element;
+            return donationPost;
         }
-
-        public async Task Delete(Guid id)
+        public async Task DeleteByUser(Guid userId, Guid donationPostId) 
         {
-            DonationPost? donationPost = await Get(id);
+            DonationPost? donationPost = await GetByUser(userId, donationPostId);
             if (donationPost != null)
             {
                 _appContext.Remove(donationPost);
                 await _appContext.SaveChangesAsync();
             }
         }
-
-        public async Task<DonationPost?> Get(Guid id)
+        public async Task DeleteByDonationCenter(Guid donationCenterId, Guid donationPostId)
+        {
+            DonationPost? donationPost = await GetByDonationCenter(donationCenterId, donationPostId);
+            if (donationPost != null)
+            {
+                _appContext.Remove(donationPost);
+                await _appContext.SaveChangesAsync();
+            }
+        }
+        public async Task<DonationPost?> GetByUser(Guid userId, Guid donationPostId)
         {
             return await _appContext.DonationPosts
+                .Where(dp => dp.UserId == userId && dp.Id == donationPostId)
                 .Include(dp => dp.BloodType)
                 .Include(dp => dp.DonationType)
                 .Include(dp => dp.User)
                 .Include(dp => dp.DonationCenter)
                 .Include(dp => dp.Comments)
-                .FirstOrDefaultAsync(dp => dp.Id == id);
+                .FirstOrDefaultAsync();
         }
-
-        public async Task<IEnumerable<DonationPost>> GetAll()
+        public async Task<DonationPost?> GetByDonationCenter(Guid donationCenterId, Guid donationPostId)
         {
             return await _appContext.DonationPosts
+                .Where(dp => dp.DonationCenterId == donationCenterId && dp.Id == donationPostId)
+                .Include(dp => dp.BloodType)
+                .Include(dp => dp.DonationType)
+                .Include(dp => dp.User)
+                .Include(dp => dp.DonationCenter)
+                .Include(dp => dp.Comments)
+                .FirstOrDefaultAsync();
+        }
+        public async Task<IEnumerable<DonationPost>> GetByUser(Guid userId)
+        {
+            return await _appContext.DonationPosts
+                .Where (dp => dp.UserId == userId)
                 .Include(dp => dp.BloodType)
                 .Include(dp => dp.DonationType)
                 .Include(dp => dp.DonationCenter)
@@ -50,11 +69,21 @@ namespace Umss.BloodOrgansDonationApp.Repository
                 .Include(dp => dp.Comments)
                 .ToListAsync();
         }
-
-        public async Task<DonationPost> Update(DonationPost element)
+        public async Task<IEnumerable<DonationPost>> GetByDonationCenter(Guid donationCenterId)
+        {
+            return await _appContext.DonationPosts
+                .Where(dp => dp.DonationCenterId == donationCenterId)
+                .Include(dp => dp.BloodType)
+                .Include(dp => dp.DonationType)
+                .Include(dp => dp.DonationCenter)
+                .Include(dp => dp.User)
+                .Include(dp => dp.Comments)
+                .ToListAsync();
+        }
+        public async Task<DonationPost> Update(DonationPost donationPost)
         {
             await _appContext.SaveChangesAsync();
-            return element;
+            return donationPost;
         }
     }
 }

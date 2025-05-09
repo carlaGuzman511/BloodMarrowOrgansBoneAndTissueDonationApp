@@ -7,10 +7,6 @@ namespace Umss.BloodOrgansDonationApp.Services.Validators
     {
         public DonationPostRequestValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty()
-                .WithMessage("El id del usuario es requerido");
-
             RuleFor(x => x.BloodTypeId)
                 .NotEmpty()
                 .WithMessage("La id del tipo de sangre es requerido");

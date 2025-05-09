@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.API.Controllers
@@ -11,22 +11,22 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
     [Route("api")]
     public class DonationPostController: ControllerBase
     {
-        private readonly IDonationPostService _DonationPostService;
+        private readonly IDonationPostService<DonationPostRequest, DonationPostResponse> _DonationPostService;
 
-        public DonationPostController(IDonationPostService DonationPostService)
+        public DonationPostController(IDonationPostService<DonationPostRequest, DonationPostResponse> DonationPostService)
         {
             _DonationPostService = DonationPostService;
         }
 
         [HttpGet("users/{userId}/donation-posts/{donationPostId}")]
-        public async Task<ActionResult<DonationPost>> Get(Guid userId, Guid donationPostId)
+        public async Task<ActionResult<DonationPostResponse>> GetByUser(Guid userId, Guid donationPostId)
         {
             try
             {
-                DonationPost? response = await _DonationPostService.Get(id);
+                DonationPostResponse? response = await _DonationPostService.GetByUser(userId, donationPostId);
                 if(response == null)
                 {
-                    return NotFound($"Donation Post with ID {id} not found.");
+                    return NotFound($"Donation Post ID {donationPostId}, and User ID {userId} not found.");
                 }
 
                 return Ok(response);
@@ -42,17 +42,17 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpDelete("users/{userId}/donation-posts/{donationPostId}")]
-        public async Task<ActionResult> Delete(Guid userId, Guid donationPostId)
+        public async Task<ActionResult> DeleteByUser(Guid userId, Guid donationPostId)
         {
             try
             {
-                DonationPost? response = await _DonationPostService.Get(id);
+                DonationPostResponse? response = await _DonationPostService.GetByUser(userId, donationPostId);
                 if (response == null)
                 {
-                    return NotFound($"Donation Post with ID {id} not found.");
+                    return NotFound($"Donation Post ID {donationPostId}, and User ID {userId} not found.");
                 }
 
-                await _DonationPostService.Delete(id);
+                await _DonationPostService.DeleteByUser(userId, donationPostId);
                 return NoContent();
             }
             catch (ValidationException exception)
@@ -66,11 +66,11 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpGet("users/{userId}/donation-posts")]
-        public async Task<ActionResult<IEnumerable<DonationPost>>> Get(Guid userId)
+        public async Task<ActionResult<IEnumerable<DonationPostResponse>>> GetByUser(Guid userId)
         {
             try
             {
-                IEnumerable<DonationPost> response = await _DonationPostService.GetAll();
+                IEnumerable<DonationPostResponse> response = await _DonationPostService.GetByUser(userId);
                 return Ok(response);
             }
             catch (ValidationException exception)
@@ -84,12 +84,12 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpPost("users/{userId}/donation-posts")]
-        public async Task<ActionResult<DonationPost>> Create(Guid userId, [FromBody] DonationPostRequest donationPostRequest)
+        public async Task<ActionResult<DonationPostResponse>> CreateByUser(Guid userId, [FromBody] DonationPostRequest donationPostRequest)
         {
             try
             {
-                DonationPost response = await _DonationPostService.Create(donationPostRequest);
-                return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
+                DonationPostResponse response = await _DonationPostService.CreateByUser(userId, donationPostRequest);
+                return StatusCode(StatusCodes.Status201Created, response);
             }
             catch (ValidationException exception)
             {
@@ -102,11 +102,11 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpPut("users/{userId}/donation-posts/{donationPostId}")]
-        public async Task<ActionResult<DonationPost>> Update(Guid userId, Guid donationPostId, [FromBody] DonationPostRequest donationPostRequest)
+        public async Task<ActionResult<DonationPostResponse>> UpdateByUser(Guid userId, Guid donationPostId, [FromBody] DonationPostRequest donationPostRequest)
         {
             try
             {
-                DonationPost response = await _DonationPostService.Update(id, donationPostRequest);
+                DonationPostResponse response = await _DonationPostService.UpdateByUser(userId, donationPostId, donationPostRequest);
                 return Ok(response);
             }
             catch (EntityNotFoundException exception)
@@ -124,14 +124,14 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpGet("donation-centers/{donationCenterId}/donation-posts/{donationPostId}")]
-        public async Task<ActionResult<DonationPost>> Get(Guid donationCenterId, Guid donationPostId)
+        public async Task<ActionResult<DonationPostResponse>> GetByDonationCenter(Guid donationCenterId, Guid donationPostId)
         {
             try
             {
-                DonationPost? response = await _DonationPostService.Get(id);
+                DonationPostResponse? response = await _DonationPostService.GetByDonationCenter(donationCenterId, donationPostId);
                 if (response == null)
                 {
-                    return NotFound($"Donation Post with ID {id} not found.");
+                    return NotFound($"Donation Post ID {donationPostId}, and Donation Center ID {donationCenterId} not found.");
                 }
 
                 return Ok(response);
@@ -147,17 +147,17 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpDelete("donation-centers/{donationCenterId}/donation-posts/{donationPostId}")]
-        public async Task<ActionResult> Delete(Guid donationCenterId, Guid donationPostId)
+        public async Task<ActionResult> DeleteByDonationCenter(Guid donationCenterId, Guid donationPostId)
         {
             try
             {
-                DonationPost? response = await _DonationPostService.Get(id);
+                DonationPostResponse? response = await _DonationPostService.GetByDonationCenter(donationCenterId, donationPostId);
                 if (response == null)
                 {
-                    return NotFound($"Donation Post with ID {id} not found.");
+                    return NotFound($"Donation Post ID {donationPostId}, and Donation Center ID {donationCenterId} not found.");
                 }
 
-                await _DonationPostService.Delete(id);
+                await _DonationPostService.DeleteByDonationCenter(donationCenterId, donationPostId);
                 return NoContent();
             }
             catch (ValidationException exception)
@@ -171,11 +171,11 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpGet("donation-centers/{donationCenterId}/donation-posts")]
-        public async Task<ActionResult<IEnumerable<DonationPost>>> Get(Guid donationCenterId)
+        public async Task<ActionResult<IEnumerable<DonationPostResponse>>> GetByDonationCenter(Guid donationCenterId)
         {
             try
             {
-                IEnumerable<DonationPost> response = await _DonationPostService.GetAll();
+                IEnumerable<DonationPostResponse> response = await _DonationPostService.GetByDonationCenter(donationCenterId);
                 return Ok(response);
             }
             catch (ValidationException exception)
@@ -189,12 +189,12 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpPost("donation-centers/{donationCenterId}/donation-posts")]
-        public async Task<ActionResult<DonationPost>> Create(Guid donationCenterId, [FromBody] DonationPostRequest donationPostRequest)
+        public async Task<ActionResult<DonationPostResponse>> CreateByDonationCenter(Guid donationCenterId, [FromBody] DonationPostRequest donationPostRequest)
         {
             try
             {
-                DonationPost response = await _DonationPostService.Create(donationPostRequest);
-                return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
+                DonationPostResponse response = await _DonationPostService.CreateByDonationCenter(donationCenterId, donationPostRequest);
+                return StatusCode(StatusCodes.Status201Created, response);
             }
             catch (ValidationException exception)
             {
@@ -207,11 +207,11 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpPut("donation-centers/{donationCenterId}/donation-posts/{donationPostId}")]
-        public async Task<ActionResult<DonationPost>> Update(Guid donationCenterId, Guid donationPostId, [FromBody] DonationPostRequest donationPostRequest)
+        public async Task<ActionResult<DonationPostResponse>> UpdateByDonationCenter(Guid donationCenterId, Guid donationPostId, [FromBody] DonationPostRequest donationPostRequest)
         {
             try
             {
-                DonationPost response = await _DonationPostService.Update(id, donationPostRequest);
+                DonationPostResponse response = await _DonationPostService.UpdateByDonationCenter(donationCenterId, donationPostId, donationPostRequest);
                 return Ok(response);
             }
             catch (EntityNotFoundException exception)
