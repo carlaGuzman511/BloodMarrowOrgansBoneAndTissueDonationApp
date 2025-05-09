@@ -15,20 +15,22 @@ namespace Umss.BloodOrgansDonationApp.Repository
         {
             await _donationAppContext.AddAsync(element);
             await _donationAppContext.SaveChangesAsync();
+
             return element;
         }
 
+        //TODO: Implement a soft delete due foreign key issues.
         public async Task Delete(Guid id)
         {
-            BloodType bloodType = await Get(id);
+            BloodType? bloodType = await Get(id);
             if (bloodType != null)
             {
                 _donationAppContext.Remove(bloodType);
+                await _donationAppContext.SaveChangesAsync();
             }
-            await _donationAppContext.SaveChangesAsync();
         }
 
-        public async Task<BloodType> Get(Guid id)
+        public async Task<BloodType?> Get(Guid id)
         {
             return await _donationAppContext.BloodTypes.FindAsync(id);
         }
@@ -37,10 +39,8 @@ namespace Umss.BloodOrgansDonationApp.Repository
         {
             return await _donationAppContext.BloodTypes.ToListAsync();
         }
-
         public async Task<BloodType> Update(BloodType element)
         {
-            _donationAppContext.Update(element);
             await _donationAppContext.SaveChangesAsync();
             return element;
         }

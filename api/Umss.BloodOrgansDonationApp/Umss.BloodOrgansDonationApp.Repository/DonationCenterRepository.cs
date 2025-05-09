@@ -21,7 +21,7 @@ namespace Umss.BloodOrgansDonationApp.Repository
 
         public async Task Delete(Guid id)
         {
-            DonationCenter donationCenter = await Get(id);
+            DonationCenter? donationCenter = await Get(id);
             if (donationCenter != null)
             {
                 _appContext.Remove(donationCenter);
@@ -32,21 +32,23 @@ namespace Umss.BloodOrgansDonationApp.Repository
         public async Task<DonationCenter?> Get(Guid id)
         {
             return await _appContext.DonationCenters
-                .Include(dc => dc.DonationPosts)
+                .Include(dc => dc.DonationCenterDonationTypes)
+                    .ThenInclude(dcdt => dcdt.DonationType)
+                //.Include(dc => dc.DonationPosts)
                 .FirstOrDefaultAsync(dc => dc.Id == id);
         }
 
         public async Task<IEnumerable<DonationCenter>> GetAll()
         {
             return await _appContext.DonationCenters
-                .Include(dc => dc.DonationTypes)
-                .Include(dc => dc.DonationPosts)
+                .Include(dc => dc.DonationCenterDonationTypes)
+                    .ThenInclude(dcdt => dcdt.DonationType)
+                //.Include(dc => dc.DonationPosts)
                 .ToListAsync();
         }
 
         public async Task<DonationCenter> Update(DonationCenter element)
         {
-            _appContext.Update(element);
             await _appContext.SaveChangesAsync();
             return element;
         }

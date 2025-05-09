@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
@@ -6,103 +7,119 @@ using Umss.BloodOrgansDonationApp.Services.Interfaces;
 namespace Umss.BloodOrgansDonationApp.API.Controllers
 {
     [ApiController]
-    [Route("comments")]
+    [Route("api/posts")]
     public class CommentController: ControllerBase
     {
-        private readonly ICommentService _commentService;
+        private readonly ICommentService<CommentRequest, CommentResponse> _commentService;
 
-        public CommentController(ICommentService commentService)
+        public CommentController(ICommentService<CommentRequest, CommentResponse> commentService)
         {
             _commentService = commentService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CommentResponse>> Get(Guid id)
+        [HttpGet("{donationPostId}/comments/{commentId}")]
+        public async Task<ActionResult<CommentResponse>> Get(Guid donationPostId, Guid commentId)
         {
             try
             {
-                var response = await _commentService.Get(id);
+                CommentResponse? response = await _commentService.Get(donationPostId, commentId);
+                if(response == null)
+                {
+                    return NotFound($"Comment with ID {commentId} not found.");
+                }
+
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentResponse>>> Get()
+        [HttpGet("{donationPostId}/comments")]
+        public async Task<ActionResult<IEnumerable<CommentResponse>>> Get(Guid donationPostId)
         {
             try
             {
-                var response = await _commentService.GetAll();
+                IEnumerable<CommentResponse> response = await _commentService.Get(donationPostId);
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<CommentResponse>> Delete(Guid id)
+        [HttpDelete("{donationPostId}/comments/{commentId}")]
+        public async Task<ActionResult> Delete(Guid donationPostId, Guid commentId)
         {
             try
             {
-                await _commentService.Delete(id);
+                CommentResponse? response = await _commentService.Get(donationPostId, commentId);
+                if (response == null)
+                {
+                    return NotFound($"Comment with ID {commentId} not found.");
+                }
+
+                await _commentService.Delete(donationPostId, commentId);
                 return NoContent();
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<CommentResponse>> Update(Guid id, [FromBody] CommentRequest commentRequest)
+        
+        [HttpPut("{donationPostId}/comments/{commentId}")]
+        public async Task<ActionResult<CommentResponse>> Update(Guid donationPostId, Guid commentId, [FromBody] CommentRequest commentRequest)
         {
             try
             {
-                var response = await _commentService.Update(id, commentRequest);
+                CommentResponse response = await _commentService.Update(donationPostId, commentId, commentRequest);
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (EntryPointNotFoundException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return NotFound(exception.Message);
+            }
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<CommentResponse>> Create([FromBody] CommentRequest commentRequest)
+        [HttpPost("{donationPostId}/comments")]
+        public async Task<ActionResult<CommentResponse>> Create(Guid donationPostId, [FromBody] CommentRequest commentRequest)
         {
             try
             {
-                var response = await _commentService.Create(commentRequest);
-                return Ok(response);
+                CommentResponse response = await _commentService.Create(donationPostId, commentRequest);
+                //return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
+                return StatusCode(201, response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }

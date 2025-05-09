@@ -1,82 +1,90 @@
-﻿using Umss.BloodOrgansDonationApp.Models;
+﻿using AutoMapper;
+using FluentValidation;
+using Umss.BloodOrgansDonationApp.Models;
+using Umss.BloodOrgansDonationApp.Models.Entities;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
+using Umss.BloodOrgansDonationApp.Repository;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
+using Umss.BloodOrgansDonationApp.Services.Validators;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
     public class DonationCenterService : IDonationCenterService
     {
         private readonly IDonationCenterRepository _donationCenterRepository;
-        public DonationCenterService(IDonationCenterRepository donationCenterRepository)
+        private readonly IDonationTypeRepository _donationTypeRepository;
+        private readonly IMapper _mapper;
+        public DonationCenterService(IDonationCenterRepository donationCenterRepository, IDonationTypeRepository donationTypeRepository, IMapper mapper)
         {
             _donationCenterRepository = donationCenterRepository;
+            _donationTypeRepository = donationTypeRepository;
+            _mapper = mapper;
         }
-        public async Task<DonationCenter> Create(DonationCenterRequest donationCenterRequest)
+        public async Task<DonationCenterResponse> Create(DonationCenterRequest donationCenterRequest)
         {
-            var donationCenter = new DonationCenter
+            DonationCenterRequestValidator donationCenterRequestValidator = new DonationCenterRequestValidator();
+            donationCenterRequestValidator.ValidateAndThrow(donationCenterRequest);
+
+            IEnumerable<DonationType> donationTypes = await _donationTypeRepository.GetByIds(donationCenterRequest.DonationTypeIds);
+
+            DonationCenter donationCenter = _mapper.Map<DonationCenter>(donationCenterRequest);
+            donationCenter.Id = Guid.NewGuid();
+            donationCenter.DonationCenterDonationTypes = donationTypes.Select(x => new DonationCenterDonationType
             {
-                Id = Guid.NewGuid(),
-                Image = donationCenterRequest.Image,
-                Name = donationCenterRequest.Name,
-                Address = donationCenterRequest.Address,
-                DonationTypes = donationCenterRequest.DonationTypes,
-                City = donationCenterRequest.City,
-            };
+                DonationTypeId = x.Id
+            }).ToList();
 
-            await _donationCenterRepository.Create(donationCenter);
+            donationCenter = await _donationCenterRepository.Create(donationCenter);
 
-            return donationCenter;
+            return _mapper.Map<DonationCenterResponse>(donationCenter);
         }
 
         public async Task Delete(Guid id)
         {
-            var donationCenter = await _donationCenterRepository.Get(id);
+            await _donationCenterRepository.Delete(id);
+        }
+
+        public async Task<DonationCenterResponse?> Get(Guid id)
+        {
+            DonationCenter? donationCenter = await _donationCenterRepository.Get(id);
             if (donationCenter != null)
             {
-                await _donationCenterRepository.Delete(id);
+                return _mapper.Map<DonationCenterResponse>(donationCenter);
             }
             else
             {
-                throw new Exception("");
+                return null;
             }
         }
 
-        public async Task<DonationCenter> Get(Guid id)
+        public async Task<IEnumerable<DonationCenterResponse>> GetAll()
         {
-            var donationCenter = await _donationCenterRepository.Get(id);
-            if (donationCenter != null)
-            {
-                return donationCenter;
-            }
-            else
-            {
-                throw new Exception("");
-            }
+            IEnumerable<DonationCenter> donationCenters = await _donationCenterRepository.GetAll();
+            IEnumerable<DonationCenterResponse> response = donationCenters.Select(x => _mapper.Map<DonationCenterResponse>(x));
+
+            return response;
         }
 
-        public async Task<IEnumerable<DonationCenter>> GetAll()
+        public async Task<DonationCenterResponse> Update(Guid id, DonationCenterRequest donationCenterRequest)
         {
-            return await _donationCenterRepository.GetAll();
-        }
-
-        public async Task<DonationCenter> Update(Guid id, DonationCenterRequest donationCenterRequest)
-        {
-            var donationCenter = await _donationCenterRepository.Get(id);
-            if (donationCenter != null)
+            DonationCenter? donationCenter = await _donationCenterRepository.Get(id);
+            if (donationCenter == null)
             {
-                donationCenter.Name = donationCenterRequest.Name;
-                donationCenter.Image = donationCenterRequest.Image;
-                donationCenter.DonationTypes = donationCenterRequest.DonationTypes;
-                donationCenter.Address = donationCenterRequest.Address;
+                throw new EntityNotFoundException($"Donation Center with ID {id} not found.");
+            }
 
-                await _donationCenterRepository.Update(donationCenter);
-                return donationCenter;
-            }
-            else
-            {
-                throw new Exception("");
-            }
+            DonationCenterRequestValidator donationCenterRequestValidator = new DonationCenterRequestValidator();
+            donationCenterRequestValidator.ValidateAndThrow(donationCenterRequest);
+
+            _mapper.Map(donationCenterRequest, donationCenter);
+            donationCenter.Id = id;
+
+            donationCenter = await _donationCenterRepository.Update(donationCenter);
+            
+            return _mapper.Map<DonationCenterResponse>(donationCenter);
         }
     }
 }

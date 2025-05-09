@@ -18,9 +18,10 @@ namespace Umss.BloodOrgansDonationApp.Repository
             return element;
         }
 
+        //TODO: Implement a soft delete due foreign key issues.
         public async Task Delete(Guid id)
         {
-            User user = await Get(id);
+            User? user = await Get(id);
             if (user != null)
             {
                 _appContext.Remove(user);
@@ -28,7 +29,7 @@ namespace Umss.BloodOrgansDonationApp.Repository
             }
         }
 
-        public async Task<User> Get(Guid id)
+        public async Task<User?> Get(Guid id)
         {
             return await _appContext.Users.FindAsync(id);
         }
@@ -40,7 +41,6 @@ namespace Umss.BloodOrgansDonationApp.Repository
 
         public async Task<User> Update(User element)
         {
-            _appContext.Update(element);
             await _appContext.SaveChangesAsync();
             return element;
         }

@@ -1,108 +1,83 @@
-﻿using Umss.BloodOrgansDonationApp.Models.Entities;
+﻿using AutoMapper;
+using FluentValidation;
+using Umss.BloodOrgansDonationApp.Models.Entities;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
+using Umss.BloodOrgansDonationApp.Services.Validators;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
-    public class CommentService : ICommentService
+    public class CommentService : ICommentService<CommentRequest, CommentResponse>
     {
-        private readonly ICommentRepository _commentRepository;
-        public CommentService(ICommentRepository commentRepository)
+        private readonly ICommentRepository<Comment> _commentRepository;
+        private readonly IMapper _mapper;
+        public CommentService(ICommentRepository<Comment> commentRepository, IMapper mapper)
         {
             _commentRepository = commentRepository;
+            _mapper = mapper;
         }
-        public async Task<CommentResponse> Create(CommentRequest commentRequest)
+        public async Task<CommentResponse> Create(Guid donationPostId, CommentRequest commentRequest)
         {
-            var comment = new Comment
-            {
-                Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now,
-                DonationPostId = commentRequest.DonationPostId,
-                Description = commentRequest.Description,
-            };
-            await _commentRepository.Create(comment);
+            CommentRequestValidator commentRequestValidator = new CommentRequestValidator();
+            commentRequestValidator.ValidateAndThrow(commentRequest);
 
-            var response = new CommentResponse
-            {
-                Id = comment.Id,
-                CreatedAt = comment.CreatedAt,
-                UpdatedAt = comment.UpdatedAt,
-                Description = comment.Description,
-                DonationPostId= commentRequest.DonationPostId,
-            };
+            Comment comment = _mapper.Map<Comment>(commentRequest);
+            comment.Id = Guid.NewGuid();
+            comment.CreatedAt = DateTime.UtcNow;
+            comment.DonationPostId = donationPostId;
 
-            return response;
+            comment = await _commentRepository.Create(comment);
+
+            return _mapper.Map<CommentResponse>(comment);
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(Guid donationPostId, Guid commentId)
         {
-            var comment = await _commentRepository.Get(id);
-            if (comment != null)
-            {
-                await _commentRepository.Delete(id);
-            }
-            else
-            {
-                throw new Exception("");
-            }
+            await _commentRepository.Delete(donationPostId, commentId);
         }
 
-        public async Task<CommentResponse> Get(Guid id)
+        public async Task<CommentResponse?> Get(Guid donationPostId, Guid commentId)
         {
-            var comment = await _commentRepository.Get(id);
+            Comment? comment = await _commentRepository.Get(donationPostId, commentId);
             if (comment != null) 
             {
-                var response = new CommentResponse 
-                { 
-                    Description = comment.Description,
-                    CreatedAt = comment.CreatedAt,
-                    UpdatedAt = comment.UpdatedAt,
-                    Id = comment.Id,
-                    DonationPostId = comment.DonationPostId,
-                };
-
-                return response;
+                return _mapper.Map<CommentResponse>(comment);
             }
             else
             {
-                throw new Exception("");
+                return null;
             }
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetAll()
+        public async Task<IEnumerable<CommentResponse>> Get(Guid donationPostId)
         {
-            var comments = await _commentRepository.GetAll();
-            var response = comments.Select(x => new CommentResponse{
-                Id = x.Id,
-                Description = x.Description,
-                CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt,
-                DonationPostId = x.DonationPostId,
-            });
+            IEnumerable<Comment> comments = await _commentRepository.Get(donationPostId);
+            IEnumerable<CommentResponse> response = comments.Select(x => _mapper.Map<CommentResponse>(x));
 
             return response;
         }
-
-        public async Task<CommentResponse> Update(Guid id, CommentRequest element)
+        public async Task<CommentResponse> Update(Guid donationPostId, Guid commentId, CommentRequest commentRequest)
         {
-            var comment = await _commentRepository.Get(id);
-            if (comment != null)
+            Comment? comment = await _commentRepository.Get(donationPostId, commentId);
+            if (comment == null)
             {
-                comment.Description = element.Description;
-                comment.UpdatedAt = DateTime.Now;
-                comment.DonationPostId = element.DonationPostId;
-
-                await _commentRepository.Update(comment);
-                var response = await Get(comment.Id);
-
-                return response;
+                throw new EntityNotFoundException($"Comment with ID {commentId} from post ID {donationPostId} not found.");
             }
-            else
-            {
-                throw new Exception("");
-            }
+
+            CommentRequestValidator commentRequestValidator = new CommentRequestValidator();
+            commentRequestValidator.ValidateAndThrow(commentRequest);
+
+            _mapper.Map(commentRequest, comment);
+            comment.UpdatedAt = DateTime.Now;
+            comment.DonationPostId = donationPostId;
+            comment.Id = commentId;
+
+            comment = await _commentRepository.Update(comment);
+
+            return _mapper.Map<CommentResponse>(comment);
         }
     }
 }

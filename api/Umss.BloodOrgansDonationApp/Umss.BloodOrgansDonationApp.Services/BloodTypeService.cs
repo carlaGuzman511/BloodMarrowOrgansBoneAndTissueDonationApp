@@ -2,52 +2,41 @@
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
+using Umss.BloodOrgansDonationApp.Services.Validators;
+using FluentValidation;
+using AutoMapper;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
     public class BloodTypeService : IBloodTypeService
     {
         private readonly IBloodTypeRepository _bloodTypeRepository;
-        public BloodTypeService(IBloodTypeRepository bloodTypeRepository)
+        private readonly IMapper _mapper;
+        public BloodTypeService(IBloodTypeRepository bloodTypeRepository, IMapper mapper)
         {
-            this._bloodTypeRepository = bloodTypeRepository;
+            _bloodTypeRepository = bloodTypeRepository;
+            _mapper = mapper;
         }
         public async Task<BloodType> Create(BloodTypeRequest bloodTypeRequest)
         {
-            var bloodType = new BloodType
-            {
-                Image = bloodTypeRequest.Image,
-                Name = bloodTypeRequest.Name,
-                Id = Guid.NewGuid()
-            };
+            BloodTypeRequestValidator bloodTypeRequestValidator = new BloodTypeRequestValidator();
+            bloodTypeRequestValidator.ValidateAndThrow(bloodTypeRequest);
+
+            var bloodType = _mapper.Map<BloodType>(bloodTypeRequest);
+            bloodType.Id = Guid.NewGuid();
 
             return await _bloodTypeRepository.Create(bloodType);
         }
 
         public async Task Delete(Guid id)
         {
-            var bloodType = await _bloodTypeRepository.Get(id);
-            if (bloodType != null) 
-            { 
-                await _bloodTypeRepository.Delete(id);
-            }
-            else
-            {
-                throw new ArgumentNullException("");
-            }
+            await _bloodTypeRepository.Delete(id);
         }
 
-        public async Task<BloodType> Get(Guid id)
+        public async Task<BloodType?> Get(Guid id)
         {
-            var bloodType = await _bloodTypeRepository.Get(id);
-            if (bloodType != null) 
-            {
-                return bloodType;
-            }
-            else
-            {
-                throw new ArgumentNullException("");
-            }
+            return await _bloodTypeRepository.Get(id);
         }
 
         public async Task<IEnumerable<BloodType>> GetAll()
@@ -57,21 +46,19 @@ namespace Umss.BloodOrgansDonationApp.Services
 
         public async Task<BloodType> Update(Guid id, BloodTypeRequest bloodTypeRequest)
         {
-            var bloodType = await _bloodTypeRepository.Get(id);
-            if (bloodType != null) 
+            BloodType? bloodType = await _bloodTypeRepository.Get(id);
+            if (bloodType == null)
             {
-                bloodType.Name = bloodTypeRequest.Name;
-                bloodType.Image = bloodTypeRequest.Image;
-
-                await _bloodTypeRepository.Update(bloodType);
-
-                var response = await Get(bloodType.Id);
-                return response;
+                throw new EntityNotFoundException($"BloodType with ID {id} not found.");
             }
-            else
-            {
-                throw new ArgumentNullException("");
-            }
+
+            BloodTypeRequestValidator bloodTypeRequestValidator = new BloodTypeRequestValidator();
+            bloodTypeRequestValidator.ValidateAndThrow(bloodTypeRequest);
+
+            _mapper.Map(bloodTypeRequest, bloodType);
+            bloodType.Id = id;
+
+            return await _bloodTypeRepository.Update(bloodType);
         }
     }
 }

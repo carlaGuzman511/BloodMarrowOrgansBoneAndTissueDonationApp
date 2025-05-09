@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Umss.BloodOrgansDonationApp.Models;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.API.Controllers
 {
     [Controller]
-    [Route("donationCenters")]
+    [Route("api/donation-centers")]
     public class DonationCenterController : ControllerBase
     {
         private readonly IDonationCenterService _donationCenterService;
@@ -17,93 +19,108 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DonationCenter>> Get(Guid id)
+        public async Task<ActionResult<DonationCenterResponse>> Get(Guid id)
         {
             try
             {
-                var response = await _donationCenterService.Get(id);
+                DonationCenterResponse? response = await _donationCenterService.Get(id);
+                if (response == null)
+                {
+                    return NotFound($"Donation Center with ID {id} not found.");
+                }
+
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new {errors = exception.Errors.Select(e => e.ErrorMessage)});
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DonationCenter>>> Get()
+        public async Task<ActionResult<IEnumerable<DonationCenterResponse>>> Get()
         {
             try
             {
-                var response = await _donationCenterService.GetAll();
+                IEnumerable<DonationCenterResponse> response = await _donationCenterService.GetAll();
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(Guid id)
+        internal async Task<ActionResult> Delete(Guid id)
         {
             try
             {
+                DonationCenterResponse? response = await _donationCenterService.Get(id);
+                if (response == null)
+                {
+                    return NotFound($"Donation Center with ID {id} not found.");
+                }
+
                 await _donationCenterService.Delete(id);
                 return NoContent();
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
 
         }
 
         [HttpPost]
-        public async Task<ActionResult<DonationCenter>> Create([FromBody] DonationCenterRequest donationCenterRequest)
+        public async Task<ActionResult<DonationCenterResponse>> Create([FromBody] DonationCenterRequest donationCenterRequest)
         {
             try
             {
-                var response = await _donationCenterService.Create(donationCenterRequest);
-                return Ok(response);
+                DonationCenterResponse response = await _donationCenterService.Create(donationCenterRequest);
+                return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<DonationCenter>> Update(Guid id, [FromBody] DonationCenterRequest donationCenterRequest)
+        public async Task<ActionResult<DonationCenterResponse>> Update(Guid id, [FromBody] DonationCenterRequest donationCenterRequest)
         {
             try
             {
-                var response = await _donationCenterService.Update(id, donationCenterRequest);
+                DonationCenterResponse response = await _donationCenterService.Update(id, donationCenterRequest);
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (EntityNotFoundException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return NotFound(exception.Message);
+            }
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }

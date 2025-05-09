@@ -19,9 +19,10 @@ namespace Umss.BloodOrgansDonationApp.Repository
             return element;
         }
 
+        //TODO: Implement a soft delete due foreign key issues.
         public async Task Delete(Guid id)
         {
-            DonationType donationType = await Get(id);
+            DonationType? donationType = await Get(id);
             if (donationType != null)
             {
                 _appContext.Remove(donationType);
@@ -29,7 +30,7 @@ namespace Umss.BloodOrgansDonationApp.Repository
             }
         }
 
-        public async Task<DonationType> Get(Guid id)
+        public async Task<DonationType?> Get(Guid id)
         {
             return await _appContext.DonationTypes.FindAsync(id);
         }
@@ -39,9 +40,13 @@ namespace Umss.BloodOrgansDonationApp.Repository
             return await _appContext.DonationTypes.ToListAsync();
         }
 
+        public async Task<IEnumerable<DonationType>> GetByIds(IEnumerable<Guid> donationTypeIds)
+        {
+            return await _appContext.DonationTypes.Where(x => donationTypeIds.Contains(x.Id)).ToListAsync();
+        }
+
         public async Task<DonationType> Update(DonationType element)
         {
-            _appContext.Update(element);
             await _appContext.SaveChangesAsync();
             return element;
         }

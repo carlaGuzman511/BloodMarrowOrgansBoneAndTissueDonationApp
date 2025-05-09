@@ -4,7 +4,7 @@ using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.Repository
 {
-    public class CommentRepository : ICommentRepository
+    public class CommentRepository : ICommentRepository<Comment>
     {
         private readonly DonationAppContext _appContext;
         public CommentRepository(DonationAppContext appContext)
@@ -18,9 +18,9 @@ namespace Umss.BloodOrgansDonationApp.Repository
             return element;
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(Guid donationPostId, Guid commentId)
         {
-            var comment = Get(id);
+            Comment? comment = await Get(donationPostId, commentId);
             if (comment != null) 
             { 
                 _appContext.Remove(comment);
@@ -29,19 +29,17 @@ namespace Umss.BloodOrgansDonationApp.Repository
             await _appContext.SaveChangesAsync();
         }
 
-        public async Task<Comment> Get(Guid id)
+        public async Task<Comment?> Get(Guid donationPostId, Guid commentId)
         {
-            return await _appContext.Comments.FindAsync(id);
+            return await _appContext.Comments.Where(x => x.DonationPostId == donationPostId && x.Id == commentId).FirstOrDefaultAsync();
         }
-
-        public async Task<IEnumerable<Comment>> GetAll()
+        public async Task<IEnumerable<Comment>> Get(Guid donationPostId)
         {
-            return await _appContext.Comments.ToListAsync();
+            return await _appContext.Comments.Where(x => x.DonationPostId == donationPostId).ToListAsync();
         }
 
         public async Task<Comment> Update(Comment element)
         {
-            _appContext.Update(element);
             await _appContext.SaveChangesAsync();
             return element;
         }

@@ -6,15 +6,15 @@ using Umss.BloodOrgansDonationApp.Services;
 
 namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
 {
-    public class DonationPostServiceTest : IClassFixture<ServiceFixture>
+    public class DonationPostServiceTest : IClassFixture<RepositoryFixture>
     {
         private readonly DonationPostService donationPostService;
-        private readonly ServiceFixture serviceFixture;
+        private readonly RepositoryFixture repositoryFixture;
 
-        public DonationPostServiceTest(ServiceFixture serviceFixture)
+        public DonationPostServiceTest(RepositoryFixture repositoryFixture)
         {
-            this.serviceFixture = serviceFixture;
-            this.donationPostService = new DonationPostService(this.serviceFixture.DonationPostRepository);
+            this.repositoryFixture = repositoryFixture;
+            this.donationPostService = new DonationPostService(this.repositoryFixture.DonationPostRepository);
         }
         private IEnumerable<DonationPost> GetDonationPosts()
         {
@@ -58,7 +58,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetAll()
         {
-            this.serviceFixture.DonationPostRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetDonationPosts());
+            this.repositoryFixture.DonationPostRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetDonationPosts());
             var donationPosts = await this.donationPostService.GetAll();
 
             Assert.NotEmpty(donationPosts);
@@ -67,7 +67,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetById()
         {
-            this.serviceFixture.DonationPostRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationPost());
+            this.repositoryFixture.DonationPostRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationPost());
             var donationPost = await this.donationPostService.Get(Guid.NewGuid());
 
             Assert.NotNull(donationPost);
@@ -76,7 +76,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Create()
         {
-            this.serviceFixture.DonationPostRepositoryMock.Setup(x => x.Create(It.IsAny<DonationPost>())).ReturnsAsync(this.GetDonationPost());
+            this.repositoryFixture.DonationPostRepositoryMock.Setup(x => x.Create(It.IsAny<DonationPost>())).ReturnsAsync(this.GetDonationPost());
             DonationPost donationPost = await this.donationPostService.Create(this.GetDonationPostRequest());
 
             Assert.NotNull(donationPost);
@@ -85,14 +85,15 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Delete()
         {
-            this.serviceFixture.DonationPostRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
+            this.repositoryFixture.DonationPostRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
             await this.donationPostService.Delete(Guid.NewGuid());
         }
 
         [Fact]
         public async void Update()
         {
-            this.serviceFixture.DonationPostRepositoryMock.Setup(x => x.Update(It.IsAny<DonationPost>())).ReturnsAsync(this.GetDonationPost());
+            this.repositoryFixture.DonationPostRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationPost());
+            this.repositoryFixture.DonationPostRepositoryMock.Setup(x => x.Update(It.IsAny<DonationPost>())).ReturnsAsync(this.GetDonationPost());
             DonationPost donationPost = await this.donationPostService.Update(Guid.NewGuid(), this.GetDonationPostRequest());
 
             Assert.NotNull(donationPost);

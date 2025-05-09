@@ -2,34 +2,21 @@ import { Image, View, Text, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import { images, SIZES, FONTS, COLORS } from "../constants";
 import { AntDesign, Entypo, EvilIcons, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Location from "expo-location";
+import MapView, { Marker, Polyline }from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 
-const Profile = () => {
-    const [address, setAddress] = useState('Loading...');
-    const [errorMsg, setErrorMsg] = useState('');
-    useEffect(() => {
-        const getPermissions = async () => {
-            let { status } = await Location.requestBackgroundPermissionsAsync();
-            if(status !== 'granted'){
-                setErrorMsg('Permission to access location was denied');
-                return;
-            }
-            let location = await Location.getCurrentPositionAsync();
-            const text = JSON.stringify(location);
-            const parsedData = JSON.parse(text);
-            const longitude = parsedData.coords.Longitude;
-            const latitude = parsedData.coords.Latitude;
-            let address = await Location.reverseGeocodeAsync({
-                longitude,
-                latitude,
-            });
-            setAddress(`${address[0].name}, ${address[0].district}, ${address[0].city}`);
-        }
-
-        getPermissions();
-    }, []);
+const DonationCenterProfile = () => {
+    const [origin, setOrigin] = useState<any>({
+        latitude: -17.38524,
+        longitude: -66.14841,
+      });
+    
+      const [destination, setDestination] = useState<any>({
+        latitude: -17.388818852963695,
+        longitude: -66.2053439788403,
+      });
 
     const onHeaderPress = () => {
         // navigation.navigate('Home');
@@ -48,7 +35,7 @@ const Profile = () => {
                 }}
             >
                 <Image
-                    source={images.boyImage}
+                    source={images.a}
                     resizeMode="contain"
                     style={{
                         height: 100,
@@ -73,14 +60,14 @@ const Profile = () => {
                         size={24}
                         color={COLORS.primary}
                     />
-                    <Text
+                    {/* <Text
                         style={{
                             ...FONTS.body4,
                             marginLeft:8,
                         }}
                     >
                         {address}
-                    </Text>
+                    </Text> */}
                 </View>
             </View>
         );
@@ -228,6 +215,49 @@ const Profile = () => {
         );
     }
 
+    const renderMap = () => {
+        return(
+            <View>
+                <MapView
+                    style={{
+                        height: 50,
+                        width: 100,
+                    }}
+                    initialRegion={{
+                        latitude: origin.latitude,
+                        longitude: origin.longitude,
+                        latitudeDelta: 0.09,
+                        longitudeDelta: 0.04,
+                    }}
+                >
+                    <Marker
+                        draggable
+                        title = "Hospital Location"
+                        coordinate={{
+                            latitude: origin.latitude,
+                            longitude: origin.longitude,
+                        }}
+                        onDragEnd={(destination: any) => setOrigin(destination.nativeEvent.coordinate)}
+                    />
+                    <Marker
+                        draggable
+                        title="Your Current Location"
+                        coordinate={{
+                            latitude: destination.latitude,
+                            longitude: destination.longitude,
+                        }}
+                        onDragEnd={(destination: any) => setDestination(destination.nativeEvent.coordinate)}
+                    />
+                    <Polyline
+                        coordinates={[origin, destination]}
+                        strokeColor="red"
+                        strokeWidth={8}
+                    />
+                </MapView>
+            </View>
+        );
+    }
+
     const renderSettings = () => {
         return(
             <View
@@ -342,10 +372,10 @@ const Profile = () => {
                 {renderButtons()}
                 {renderFeatures()}
                 {renderSettings()}
+                {renderMap()}
             </View>
         </SafeAreaView>
     );
 }
 
-
-export default Profile;
+export default DonationCenterProfile;

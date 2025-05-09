@@ -3,9 +3,9 @@ using Umss.BloodOrgansDonationApp.Models.Requests;
 
 namespace Umss.BloodOrgansDonationApp.Services.Validators
 {
-    internal class DonationPostValidatorTest: AbstractValidator<DonationPostRequest>
+    internal class DonationPostRequestValidator: AbstractValidator<DonationPostRequest>
     {
-        public DonationPostValidatorTest()
+        public DonationPostRequestValidator()
         {
             RuleFor(x => x.UserId)
                 .NotEmpty()

@@ -1,23 +1,21 @@
 ﻿using Moq;
-using System.Net;
 using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Service.Tests.Utilities;
 using Umss.BloodOrgansDonationApp.Services;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
 {
-    public class UserServiceTest : IClassFixture<ServiceFixture>
+    public class UserServiceTest : IClassFixture<RepositoryFixture>
     {
         protected readonly UserService userService;
-        protected readonly ServiceFixture serviceFixture;
+        protected readonly RepositoryFixture repositoryFixture;
 
-        public UserServiceTest(ServiceFixture serviceFixture)
+        public UserServiceTest(RepositoryFixture repositoryFixture)
         {
-            this.serviceFixture = serviceFixture;
-            this.userService = new UserService(this.serviceFixture.UserRepository);
+            this.repositoryFixture = repositoryFixture;
+            this.userService = new UserService(this.repositoryFixture.UserRepository);
         }
 
         private IEnumerable<User> GetUsers() 
@@ -62,7 +60,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetAll()
         {
-            this.serviceFixture.UserRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetUsers());
+            this.repositoryFixture.UserRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetUsers());
             IEnumerable<UserResponse> users = await this.userService.GetAll();
 
             Assert.NotEmpty(users);
@@ -71,7 +69,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetById()
         {
-            this.serviceFixture.UserRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetUser());
+            this.repositoryFixture.UserRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetUser());
             UserResponse user = await this.userService.Get(Guid.NewGuid());
 
             Assert.NotNull(user);
@@ -80,7 +78,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Create()
         {
-            this.serviceFixture.UserRepositoryMock.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(this.GetUser());
+            this.repositoryFixture.UserRepositoryMock.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(this.GetUser());
             UserResponse userResponse = await this.userService.Create(this.GetUserRequest());
 
             Assert.NotNull(userResponse);
@@ -89,14 +87,15 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Delete()
         {
-            this.serviceFixture.UserRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
+            this.repositoryFixture.UserRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
             await this.userService.Delete(Guid.NewGuid());
         }
 
         [Fact]
         public async void Update()
         {
-            this.serviceFixture.UserRepositoryMock.Setup(x => x.Update(It.IsAny<User>())).ReturnsAsync(this.GetUser());
+            this.repositoryFixture.UserRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetUser());
+            this.repositoryFixture.UserRepositoryMock.Setup(x => x.Update(It.IsAny<User>())).ReturnsAsync(this.GetUser());
             UserResponse userResponse = await this.userService.Update(Guid.NewGuid(), this.GetUserRequest());
 
             Assert.NotNull(userResponse);

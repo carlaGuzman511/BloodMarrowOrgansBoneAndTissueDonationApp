@@ -1,22 +1,21 @@
 ﻿using Moq;
-using System.Diagnostics;
 using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Service.Tests.Utilities;
 using Umss.BloodOrgansDonationApp.Services;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
 {
-    public class DonationTypeServiceTest: IClassFixture<ServiceFixture>
+    public class DonationTypeServiceTest: IClassFixture<RepositoryFixture>
     {
-        private readonly ServiceFixture serviceFixture;
+        private readonly RepositoryFixture repositoryFixture;
         private readonly DonationTypeService donationTypeService;
 
-        public DonationTypeServiceTest(ServiceFixture serviceFixture)
+        public DonationTypeServiceTest(RepositoryFixture repositoryFixture)
         {
-            this.serviceFixture = serviceFixture;
-            this.donationTypeService = new DonationTypeService(this.serviceFixture.DonationTypeRepository);
+            this.repositoryFixture = repositoryFixture;
+            this.donationTypeService = new DonationTypeService(this.repositoryFixture.DonationTypeRepository);
         }
         private IEnumerable<DonationType> GetDonationTypes() 
         {
@@ -61,8 +60,8 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetAll()
         {
-            this.serviceFixture.DonationTypeRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetDonationTypes);
-            IEnumerable<DonationType> donationTypes = await this.donationTypeService.GetAll();
+            this.repositoryFixture.DonationTypeRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetDonationTypes);
+            IEnumerable<DonationTypeResponse> donationTypes = await this.donationTypeService.GetAll();
 
             Assert.NotEmpty(donationTypes);
         }
@@ -70,8 +69,8 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetById()
         {
-            this.serviceFixture.DonationTypeRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationType);
-            DonationType donationType = await this.donationTypeService.Get(Guid.NewGuid());
+            this.repositoryFixture.DonationTypeRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationType);
+            DonationTypeResponse donationType = await this.donationTypeService.Get(Guid.NewGuid());
 
             Assert.NotNull(donationType);
         }
@@ -79,8 +78,8 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Create()
         {
-            this.serviceFixture.DonationTypeRepositoryMock.Setup(x => x.Create(It.IsAny<DonationType>())).ReturnsAsync(this.GetDonationType());
-            DonationType donationType = await this.donationTypeService.Create(this.GetDonationTypeRequest());
+            this.repositoryFixture.DonationTypeRepositoryMock.Setup(x => x.Create(It.IsAny<DonationType>())).ReturnsAsync(this.GetDonationType());
+            DonationTypeResponse donationType = await this.donationTypeService.Create(this.GetDonationTypeRequest());
 
             Assert.NotNull(donationType);
         }
@@ -88,16 +87,16 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Delete()
         {
-            this.serviceFixture.DonationTypeRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
+            this.repositoryFixture.DonationTypeRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
             await this.donationTypeService.Delete(Guid.NewGuid());
         }
 
         [Fact]
         public async void Update()
         {
-            this.serviceFixture.DonationTypeRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationType());
-            this.serviceFixture.DonationTypeRepositoryMock.Setup(x => x.Update(It.IsAny<DonationType>())).ReturnsAsync(this.GetDonationType());
-            DonationType donationType = await this.donationTypeService.Update(Guid.NewGuid(), this.GetDonationTypeRequest());
+            this.repositoryFixture.DonationTypeRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationType());
+            this.repositoryFixture.DonationTypeRepositoryMock.Setup(x => x.Update(It.IsAny<DonationType>())).ReturnsAsync(this.GetDonationType());
+            DonationTypeResponse donationType = await this.donationTypeService.Update(Guid.NewGuid(), this.GetDonationTypeRequest());
 
             Assert.NotNull(donationType);
         }

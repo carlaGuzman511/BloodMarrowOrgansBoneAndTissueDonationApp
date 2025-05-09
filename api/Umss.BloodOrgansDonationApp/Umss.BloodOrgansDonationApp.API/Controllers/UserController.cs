@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Umss.BloodOrgansDonationApp.Models;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.API.Controllers
 {
     [Controller]
-    [Route("users")]
+    [Route("api/users")]
     public class UserController: ControllerBase
     {
         private readonly IUserService _userService;
@@ -17,17 +19,21 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> Get(Guid id)
+        public async Task<ActionResult<UserResponse>> Get(Guid id)
         {
             try
             {
-                var response = await _userService.Get(id);
+                UserResponse? response = await _userService.Get(id);
+                if (response == null) { 
+                    return NotFound($"User with ID {id} not found.");
+                }
+
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
@@ -35,35 +41,42 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> Get()
+        public async Task<ActionResult<IEnumerable<UserResponse>>> Get()
         {
             try
             {
-                var response = await _userService.GetAll();
+                IEnumerable<UserResponse> response = await _userService.GetAll();
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
+        //TODO: implement a soft delete
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> Delete(Guid id)
+        internal async Task<ActionResult> Delete(Guid id)
         {
             try
             {
+                UserResponse? response = await _userService.Get(id);
+                if (response == null)
+                {
+                    return NotFound($"User with ID {id} not found.");
+                }
+
                 await _userService.Delete(id);
                 return NoContent();
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
@@ -71,17 +84,17 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Create([FromBody] UserRequest userRequest)
+        public async Task<ActionResult<UserResponse>> Create([FromBody] UserRequest userRequest)
         {
             try
             {
-                var response = await _userService.Create(userRequest);
-                return Ok(response);
+                UserResponse response = await _userService.Create(userRequest);
+                return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
@@ -89,17 +102,21 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> Update(Guid id, [FromBody] UserRequest userRequest)
+        public async Task<ActionResult<UserResponse>> Update(Guid id, [FromBody] UserRequest userRequest)
         {
             try
             {
-                var response = await _userService.Update(id, userRequest);
+                UserResponse response = await _userService.Update(id, userRequest);
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
+            catch (EntityNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);

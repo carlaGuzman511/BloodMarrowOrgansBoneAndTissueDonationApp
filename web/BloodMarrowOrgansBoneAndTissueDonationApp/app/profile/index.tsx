@@ -1,21 +1,11 @@
-import { View, Text } from "react-native";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useState } from "react";
+import { View } from "react-native";
+import UserProfile from "../../screens/UserProfile";
 
 export default function Profile() {
   return (
-    <GestureHandlerRootView>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text>
-          Profile
-        </Text>
-        {/* <Profile/> */}
-      </View>
-    </GestureHandlerRootView>
+    <View>
+      <UserProfile />
+    </View>
   );
 }

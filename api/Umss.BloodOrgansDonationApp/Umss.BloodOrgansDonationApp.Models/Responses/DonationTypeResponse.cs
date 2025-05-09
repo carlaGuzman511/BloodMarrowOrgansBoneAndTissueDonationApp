@@ -1,8 +1,6 @@
-﻿using Umss.BloodOrgansDonationApp.Models.Entities;
-
-namespace Umss.BloodOrgansDonationApp.Models
+﻿namespace Umss.BloodOrgansDonationApp.Models.Responses
 {
-    public class DonationType
+    public class DonationTypeResponse
     {
         public Guid Id { get; set; }
         public required string Name { get; set; }
@@ -13,8 +11,5 @@ namespace Umss.BloodOrgansDonationApp.Models
         public required string Benefits { get; set; }
         public required string SecondaryEffects { get; set; }
         public required string Image { get; set; }
-
-        //public ICollection<DonationCenter> DonationCenters { get; set; }
-        public ICollection<DonationCenterDonationType> DonationCenterDonationTypes { get; set; }
     }
 }

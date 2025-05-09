@@ -7,14 +7,14 @@ using Umss.BloodOrgansDonationApp.Services;
 
 namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
 {
-    public class CommentServiceTest : IClassFixture<ServiceFixture>
+    public class CommentServiceTest : IClassFixture<RepositoryFixture>
     {
-        private readonly ServiceFixture serviceFixture;
+        private readonly RepositoryFixture repositoryFixture;
         private readonly CommentService commentService;
-        public CommentServiceTest(ServiceFixture serviceFixture)
+        public CommentServiceTest(RepositoryFixture repositoryFixture)
         {
-            this.serviceFixture = serviceFixture;
-            this.commentService = new CommentService(serviceFixture.CommentRepository);
+            this.repositoryFixture = repositoryFixture;
+            this.commentService = new CommentService(repositoryFixture.CommentRepository);
         }
         private IEnumerable<Comment> GetComments()
         {
@@ -53,7 +53,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetAll()
         {
-            this.serviceFixture.CommentRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetComments());
+            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetComments());
             var comments = await this.commentService.GetAll();
 
             Assert.NotEmpty(comments);
@@ -62,7 +62,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetById()
         {
-            this.serviceFixture.CommentRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetComment());
+            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetComment());
             var comment = await this.commentService.Get(Guid.NewGuid());
 
             Assert.NotNull(comment);
@@ -71,7 +71,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Create()
         {
-            this.serviceFixture.CommentRepositoryMock.Setup(x => x.Create(It.IsAny<Comment>())).ReturnsAsync(this.GetComment);
+            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.Create(It.IsAny<Comment>())).ReturnsAsync(this.GetComment);
             CommentResponse commentResponse = await this.commentService.Create(this.GetCommentRequest());
 
             Assert.NotNull(commentResponse);
@@ -80,14 +80,15 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Delete()
         {
-            this.serviceFixture.CommentRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
+            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
             await this.commentService.Delete(Guid.NewGuid());
         }
 
         [Fact]
         public async void Update()
         {
-            this.serviceFixture.CommentRepositoryMock.Setup(x => x.Update(It.IsAny<Comment>())).ReturnsAsync(this.GetComment);
+            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetComment);
+            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.Update(It.IsAny<Comment>())).ReturnsAsync(this.GetComment);
             CommentResponse commentResponse = await this.commentService.Update(Guid.NewGuid(), this.GetCommentRequest());
 
             Assert.NotNull(commentResponse);

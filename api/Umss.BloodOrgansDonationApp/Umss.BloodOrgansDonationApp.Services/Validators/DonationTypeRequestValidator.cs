@@ -4,13 +4,17 @@ using Umss.BloodOrgansDonationApp.Models.Requests;
 
 namespace Umss.BloodOrgansDonationApp.Services.Validators
 {
-    internal class DonationTypeValidator: AbstractValidator<DonationTypeRequest>
+    internal class DonationTypeRequestValidator: AbstractValidator<DonationTypeRequest>
     {
-        public DonationTypeValidator()
+        public DonationTypeRequestValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty().
-                WithMessage("El nombre del tipo de donacion es requerido");
+                .NotEmpty()
+                .WithMessage("El nombre del tipo de donacion es requerido");
+
+            RuleFor(x => x.Image)
+                .NotEmpty()
+                .WithMessage("La imagen del tipo de donacion es requerida");
 
             RuleFor(x => x.Requirements)
                 .NotEmpty()

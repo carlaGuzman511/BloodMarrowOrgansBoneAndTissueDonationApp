@@ -5,14 +5,14 @@ using Umss.BloodOrgansDonationApp.Services;
 
 namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
 {
-    public class BloodTypeServiceTest : IClassFixture<ServiceFixture>
+    public class BloodTypeServiceTest : IClassFixture<RepositoryFixture>
     {
         private readonly BloodTypeService bloodTypeService;
-        private readonly ServiceFixture serviceFixture;
-        public BloodTypeServiceTest(ServiceFixture serviceFixture)
+        private readonly RepositoryFixture repositoryFixture;
+        public BloodTypeServiceTest(RepositoryFixture repositoryFixture)
         {
-            this.serviceFixture = serviceFixture;
-            this.bloodTypeService = new BloodTypeService(serviceFixture.BloodTypeRepository);
+            this.repositoryFixture = repositoryFixture;
+            this.bloodTypeService = new BloodTypeService(repositoryFixture.BloodTypeRepository);
         }
         private IEnumerable<BloodType> GetBloodTypes()
         {
@@ -40,7 +40,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetAll()
         {
-            this.serviceFixture.BloodTypeRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetBloodTypes());
+            this.repositoryFixture.BloodTypeRepositoryMock.Setup(x => x.GetAll()).ReturnsAsync(this.GetBloodTypes());
             var bloodTypes = await this.bloodTypeService.GetAll();
 
             Assert.NotEmpty(bloodTypes);
@@ -49,7 +49,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void GetById()
         {
-            this.serviceFixture.BloodTypeRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetBloodType());
+            this.repositoryFixture.BloodTypeRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetBloodType());
             var bloodTypes = await this.bloodTypeService.Get(Guid.NewGuid());
 
             Assert.NotNull(bloodTypes);

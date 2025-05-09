@@ -3,9 +3,9 @@ using Umss.BloodOrgansDonationApp.Models.Requests;
 
 namespace Umss.BloodOrgansDonationApp.Services.Validators
 {
-    internal class UserValidator: AbstractValidator<UserRequest>
+    internal class UserRequestValidator : AbstractValidator<UserRequest>
     {
-        public UserValidator()
+        public UserRequestValidator()
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
@@ -38,6 +38,15 @@ namespace Umss.BloodOrgansDonationApp.Services.Validators
             RuleFor(x => x.Image)
                 .NotEmpty()
                 .WithMessage("La imagen del usuario es requerida");
+
+            RuleFor(x => x.Latitude)
+                .NotEmpty()
+                .WithMessage("La latitud del usuario es requerido");
+
+            RuleFor(x => x.Longitude)
+                .NotEmpty()
+                .WithMessage("La longitud del usuario es requerido");
+
         }
     }
 }

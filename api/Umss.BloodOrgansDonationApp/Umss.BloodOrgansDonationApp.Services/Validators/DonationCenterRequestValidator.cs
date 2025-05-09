@@ -3,9 +3,9 @@ using Umss.BloodOrgansDonationApp.Models.Requests;
 
 namespace Umss.BloodOrgansDonationApp.Services.Validators
 {
-    internal class DonationCenterValidator : AbstractValidator<DonationCenterRequest>
+    internal class DonationCenterRequestValidator : AbstractValidator<DonationCenterRequest>
     {
-        public DonationCenterValidator()
+        public DonationCenterRequestValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
@@ -15,7 +15,15 @@ namespace Umss.BloodOrgansDonationApp.Services.Validators
                 .NotEmpty()
                 .WithMessage("La ubicacion del centro medico es requerido");
 
-            RuleFor(x => x.DonationTypes)
+            RuleFor(x => x.Latitude)
+                .NotEmpty()
+                .WithMessage("La latitud del centro medico es requerido");
+
+            RuleFor(x => x.Longitude)
+                .NotEmpty()
+                .WithMessage("La longitud del centro medico es requerido");
+
+            RuleFor(x => x.DonationTypeIds)
                 .NotEmpty()
                 .WithMessage("Los tipos de donacion que realiza el centro medico es requerido");
 

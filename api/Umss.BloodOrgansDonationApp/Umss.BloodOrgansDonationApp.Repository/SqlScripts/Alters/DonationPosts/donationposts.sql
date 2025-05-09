@@ -1,5 +1,4 @@
-﻿select * from DonationPosts
-use DonationAppDb
+﻿use DonationAppDb
 go
 INSERT INTO [dbo].[DonationPosts](Id, BloodTypeId, DonationTypeId, UserId, DonationCenterId, Description, Image, CreatedAt,UpdatedAt)
 VALUES

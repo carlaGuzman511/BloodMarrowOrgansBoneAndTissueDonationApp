@@ -1,90 +1,81 @@
-﻿using System.Diagnostics;
+﻿using AutoMapper;
+using FluentValidation;
 using Umss.BloodOrgansDonationApp.Models;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
+using Umss.BloodOrgansDonationApp.Repository;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
+using Umss.BloodOrgansDonationApp.Services.Validators;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
     public class DonationTypeService : IDonationTypeService
     {
         private readonly IDonationTypeRepository _donationTypeRepository;
-        public DonationTypeService(IDonationTypeRepository donationTypeRepository)
+        private readonly IMapper _mapper;
+        public DonationTypeService(IDonationTypeRepository donationTypeRepository, IMapper mapper)
         {
             _donationTypeRepository = donationTypeRepository;
+            _mapper = mapper;
         }
-        public async Task<DonationType> Create(DonationTypeRequest donationTypeRequest)
+        public async Task<DonationTypeResponse> Create(DonationTypeRequest donationTypeRequest)
         {
-            var donationType = new DonationType
-            {
-                Id = Guid.NewGuid(),
-                Name = donationTypeRequest.Name,
-                Description = donationTypeRequest.Description,
-                Requirements = donationTypeRequest.Requirements,
-                Process = donationTypeRequest.Process,
-                Importance = donationTypeRequest.Importance,
-                Benefits = donationTypeRequest.Benefits,
-                SecondaryEffects = donationTypeRequest.SecondaryEffects,
-                Image = donationTypeRequest.Image,
-            };
+            DonationTypeRequestValidator donationTypeRequestValidator = new DonationTypeRequestValidator();
+            donationTypeRequestValidator.ValidateAndThrow(donationTypeRequest);
 
-            return donationType;
+            DonationType donationType = _mapper.Map<DonationType>(donationTypeRequest);
+            donationType.Id = Guid.NewGuid();
+            
+            donationType = await _donationTypeRepository.Create(donationType);
+
+            return _mapper.Map<DonationTypeResponse>(donationType);
         }
 
         public async Task Delete(Guid id)
         {
-            var donationType = await _donationTypeRepository.Get(id);
-            if (donationType != null)
-            {
-                await _donationTypeRepository.Delete(id);
-            }
-            else
-            {
-                throw new Exception("");
-            } 
+            await _donationTypeRepository.Delete(id);
         }
 
-        public async Task<DonationType> Get(Guid id)
+        public async Task<DonationTypeResponse?> Get(Guid id)
         {
-            var donationType = await _donationTypeRepository.Get(id);
-            if (donationType != null) 
-            { 
-                return donationType;
-            }
-            else
-            {
-                throw new Exception("");
-            }
-        }
-
-        public async Task<IEnumerable<DonationType>> GetAll()
-        {
-            return await _donationTypeRepository.GetAll();
-        }
-
-        public async Task<DonationType> Update(Guid id, DonationTypeRequest donationTypeRequest)
-        {
-            var donationType = await _donationTypeRepository.Get(id);
+            DonationType? donationType = await _donationTypeRepository.Get(id);
             if (donationType != null) 
             {
-                donationType.Name = donationTypeRequest.Name;
-                donationType.Description = donationTypeRequest.Description;
-                donationType.Requirements = donationTypeRequest.Requirements;
-                donationType.Process = donationTypeRequest.Process;
-                donationType.Importance = donationTypeRequest.Importance;
-                donationType.Benefits = donationTypeRequest.Benefits;
-                donationType.SecondaryEffects = donationTypeRequest.SecondaryEffects;
-                donationType.Image = donationTypeRequest.Image;
-
-                await _donationTypeRepository.Update(donationType);
-                
-                return donationType;
+                return _mapper.Map<DonationTypeResponse>(donationType);
             }
             else
             {
-                throw new Exception("");
+                return null;
             }
+        }
+
+        public async Task<IEnumerable<DonationTypeResponse>> GetAll()
+        {
+            IEnumerable<DonationType> donationTypes = await _donationTypeRepository.GetAll();
+            IEnumerable<DonationTypeResponse> responses = donationTypes.Select(x => _mapper.Map<DonationTypeResponse>(x));
+
+            return responses;
+        }
+
+        public async Task<DonationTypeResponse> Update(Guid id, DonationTypeRequest donationTypeRequest)
+        {
+            DonationType? donationType = await _donationTypeRepository.Get(id);
+            if (donationType == null)
+            {
+                throw new EntityNotFoundException($"Donation Type with ID {id} not found.");
+            }
+
+            DonationTypeRequestValidator donationTypeRequestValidator = new DonationTypeRequestValidator();
+            donationTypeRequestValidator.ValidateAndThrow(donationTypeRequest);
+
+            _mapper.Map(donationTypeRequest, donationType);
+            donationType.Id = id;
+
+            donationType = await _donationTypeRepository.Update(donationType);
+
+            return _mapper.Map<DonationTypeResponse>(donationType);
         }
     }
 }

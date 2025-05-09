@@ -3,7 +3,7 @@ using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.Service.Tests.Utilities
 {
-    public class ServiceFixture
+    public class RepositoryFixture
     {
         protected internal Mock<IUserRepository> UserRepositoryMock { get; }
         protected internal Mock<ICommentRepository> CommentRepositoryMock { get; }
@@ -19,7 +19,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Utilities
         protected internal IBloodTypeRepository BloodTypeRepository { get; }
         protected internal IDonationCenterRepository DonationCenterRepository { get; }
 
-        public ServiceFixture()
+        public RepositoryFixture()
         {
             this.BloodTypeRepositoryMock = new Mock<IBloodTypeRepository>();
             this.BloodTypeRepository = this.BloodTypeRepositoryMock.Object;

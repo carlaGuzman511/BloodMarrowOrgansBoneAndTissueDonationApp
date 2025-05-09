@@ -1,132 +1,83 @@
-﻿using Umss.BloodOrgansDonationApp.Models;
+﻿using AutoMapper;
+using FluentValidation;
+using Umss.BloodOrgansDonationApp.Models;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Models.Responses;
+using Umss.BloodOrgansDonationApp.Repository;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
+using Umss.BloodOrgansDonationApp.Services.Validators;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
-        public UserService(IUserRepository userRepository)
+        private readonly IMapper _mapper;
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             this._userRepository = userRepository;
+            _mapper = mapper;
         }
         public async Task<UserResponse> Create(UserRequest userRequest)
         {
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                Image = userRequest.Image,
-                PhoneNumber = userRequest.PhoneNumber,
-                BloodTypeId = userRequest.BloodTypeId,
-                Password = userRequest.Password,
-                Email = userRequest.Email,
-                FullName = userRequest.FullName,
-                Address = userRequest.Address,
-                DateOfBirth = userRequest.DateOfBirth,
-            };
+            UserRequestValidator userRequestValidator = new UserRequestValidator();
+            userRequestValidator.ValidateAndThrow(userRequest);
 
-            await _userRepository.Create(user);
+            User user = _mapper.Map<User>(userRequest);
+            user.Id = Guid.NewGuid();
 
-            var response = new UserResponse
-            {
-                Id = user.Id,
-                Image = user.Image,
-                PhoneNumber = user.PhoneNumber,
-                BloodTypeId = user.BloodTypeId,
-                Password = user.Password,
-                Email = user.Email,
-                FullName = user.FullName,
-                Address = user.Address,
-                DateOfBirth = user.DateOfBirth,
-            };
+            user = await _userRepository.Create(user);
 
-            return response;
+            return _mapper.Map<UserResponse>(user);
         }
 
         public async Task Delete(Guid id)
         {
-            var user = await _userRepository.Get(id);
-            if (user != null)
-            {
-                await _userRepository.Delete(id);
-            }
-            else
-            {
-                throw new Exception("");
-            }
+            await _userRepository.Delete(id);
         }
 
-        public async Task<UserResponse> Get(Guid id)
+        public async Task<UserResponse?> Get(Guid id)
         {
-            var user = await _userRepository.Get(id);
+            User? user = await _userRepository.Get(id);
             if (user != null)
             {
-                var response = new UserResponse
-                {
-                    Id = user.Id,
-                    Image = user.Image,
-                    PhoneNumber = user.PhoneNumber,
-                    BloodTypeId = user.BloodTypeId,
-                    Password = user.Password,
-                    Email = user.Email,
-                    FullName = user.FullName,
-                    Address = user.Address,
-                    DateOfBirth = user.DateOfBirth,
-                };
-
-                return response;
+                return _mapper.Map<UserResponse>(user);
             }
             else
             {
-                throw new Exception("");
+                return null;
             }
         }
 
         public async Task<IEnumerable<UserResponse>> GetAll()
         {
-            var users = await _userRepository.GetAll();
-            var response = users.Select(x => new UserResponse
-            {
-                Id = x.Id,
-                Image = x.Image,
-                PhoneNumber = x.PhoneNumber,
-                BloodTypeId = x.BloodTypeId,
-                Password = x.Password,
-                Email = x.Email,
-                FullName = x.FullName,
-                Address = x.Address,
-                DateOfBirth = x.DateOfBirth,
-            });
+            IEnumerable<User> users = await _userRepository.GetAll();
+            IEnumerable<UserResponse> response = users.Select(x => _mapper.Map<UserResponse>(x));
 
             return response;
         }
 
         public async Task<UserResponse> Update(Guid id, UserRequest userRequest)
         {
-            var user = await _userRepository.Get(id);
-            if (user != null)
+            User? user = await _userRepository.Get(id);
+            if (user == null)
             {
-                user.FullName = userRequest.FullName;
-                user.Email = userRequest.Email;
-                user.Address = userRequest.Address;
-                user.PhoneNumber = userRequest.PhoneNumber;
-                user.DateOfBirth = userRequest.DateOfBirth;
-                user.Password = userRequest.Password;
-                user.BloodTypeId = userRequest.BloodTypeId;
-                user.Image = userRequest.Image;
-
-                await _userRepository.Update(user);
-
-                return await Get(user.Id);
+                throw new EntityNotFoundException($"User with ID {id} not found.");
             }
-            else
-            {
-                throw new Exception("");
-            }
+
+            UserRequestValidator userRequestValidator = new UserRequestValidator();
+            userRequestValidator.ValidateAndThrow(userRequest);
+
+            _mapper.Map(userRequest, user);
+            user.Id = id;
+
+            user = await _userRepository.Update(user);
+
+            return _mapper.Map<UserResponse>(user);
         }
+        //D:\aso-2022\Xen.rar
+        //XenServer….exe
     }
 }

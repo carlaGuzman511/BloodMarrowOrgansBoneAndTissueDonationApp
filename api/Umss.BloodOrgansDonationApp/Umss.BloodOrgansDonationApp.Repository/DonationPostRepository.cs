@@ -53,7 +53,6 @@ namespace Umss.BloodOrgansDonationApp.Repository
 
         public async Task<DonationPost> Update(DonationPost element)
         {
-            _appContext.Update(element);
             await _appContext.SaveChangesAsync();
             return element;
         }

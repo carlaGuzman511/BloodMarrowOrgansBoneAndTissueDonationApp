@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Umss.BloodOrgansDonationApp.Models;
+using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.API.Controllers
 {
     [ApiController]
-    [Route("bloodTypes")]
+    [Route("api/blood-types")]
     public class BloodTypeController : ControllerBase
     {
         private readonly IBloodTypeService _bloodTypeService;
@@ -21,34 +23,46 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         {
             try
             {
-                var response = await _bloodTypeService.Get(id);
+                BloodType? response = await _bloodTypeService.Get(id);
+                if (response == null)
+                {
+                    return NotFound($"Blood type with ID {id} not found.");
+                }
+
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
+        //TODO: Implement a soft delete
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(Guid id)
+        internal async Task<ActionResult> Delete(Guid id)
         {
             try
             {
+                BloodType? response = await _bloodTypeService.Get(id);
+                if (response == null)
+                {
+                    return NotFound($"Blood Type with ID {id} not found.");
+                }
+
                 await _bloodTypeService.Delete(id);
                 return NoContent();
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
@@ -57,16 +71,16 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         {
             try
             {
-                var response = await _bloodTypeService.GetAll();
+                IEnumerable<BloodType> response = await _bloodTypeService.GetAll();
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch (ValidationException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
@@ -74,17 +88,17 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         public async Task<ActionResult<BloodType>> Create([FromBody] BloodTypeRequest bloodTypeRequest)
         {
             try 
-            { 
-                var response = await _bloodTypeService.Create(bloodTypeRequest);
-                return Ok(response);
-            }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                BloodType response = await _bloodTypeService.Create(bloodTypeRequest);
+                return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
+            }
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
 
@@ -93,16 +107,20 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         {
             try
             {
-                var response = await _bloodTypeService.Update(id, bloodTypeRequest);
+                BloodType response = await _bloodTypeService.Update(id, bloodTypeRequest);
                 return Ok(response);
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(ex.Message);
-            //}
-            catch (Exception ex)
+            catch(EntityNotFoundException exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return NotFound(exception.Message);
+            }
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }

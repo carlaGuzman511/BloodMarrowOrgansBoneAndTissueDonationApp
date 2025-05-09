@@ -1,4 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Umss.BloodOrgansDonationApp.Models.AutoMapper;
+using Umss.BloodOrgansDonationApp.Models.Entities;
+using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Repository;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Services;
@@ -13,18 +17,24 @@ builder.Services.AddDbContext<DonationAppContext>(
 builder.Services.AddScoped<IDonationCenterRepository, DonationCenterRepository>();
 builder.Services.AddScoped<IBloodTypeRepository, BloodTypeRepository>();
 builder.Services.AddScoped<IDonationTypeRepository, DonationTypeRepository>();
-builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentRepository<Comment>, CommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDonationPostRepository, DonationPostRepository>();
 
 builder.Services.AddScoped<IDonationCenterService, DonationCenterService>();
 builder.Services.AddScoped<IBloodTypeService, BloodTypeService>();
 builder.Services.AddScoped<IDonationTypeService, DonationTypeService>();
-builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<ICommentService<CommentRequest, CommentResponse>, CommentService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDonationPostService, DonationPostService>();
 
+builder.Services.AddAutoMapper(typeof(CommentProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(DonationTypeProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(DonationCenterProfile).Assembly);
+
 builder.Services.AddControllers();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
