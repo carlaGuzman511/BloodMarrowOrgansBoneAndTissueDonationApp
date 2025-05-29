@@ -4,7 +4,6 @@ using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Models.Responses;
-using Umss.BloodOrgansDonationApp.Repository;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
 using Umss.BloodOrgansDonationApp.Services.Validators;
@@ -59,6 +58,11 @@ namespace Umss.BloodOrgansDonationApp.Services
             return response;
         }
 
+        public Task<LoginResponse> LoginAsync(LoginRequest loginRequest)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<UserResponse> Update(Guid id, UserRequest userRequest)
         {
             User? user = await _userRepository.Get(id);
@@ -77,7 +81,5 @@ namespace Umss.BloodOrgansDonationApp.Services
 
             return _mapper.Map<UserResponse>(user);
         }
-        //D:\aso-2022\Xen.rar
-        //XenServer….exe
     }
 }

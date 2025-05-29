@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
@@ -18,6 +19,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             this._userService = userService;
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponse>> Get(Guid id)
         {
@@ -40,6 +42,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponse>>> Get()
         {
@@ -59,6 +62,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         //TODO: implement a soft delete
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         internal async Task<ActionResult> Delete(Guid id)
         {
@@ -83,7 +87,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<ActionResult<UserResponse>> Create([FromBody] UserRequest userRequest)
         {
             try
@@ -100,7 +104,8 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<UserResponse>> Update(Guid id, [FromBody] UserRequest userRequest)
         {
@@ -112,6 +117,24 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             catch (EntityNotFoundException exception)
             {
                 return NotFound(exception.Message);
+            }
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest loginRequest)
+        {
+            try
+            {
+                LoginResponse response = await _userService.LoginAsync(loginRequest);
+                return StatusCode(StatusCodes.Status200OK, response);
             }
             catch (ValidationException exception)
             {

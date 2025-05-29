@@ -15,7 +15,7 @@ namespace Umss.BloodOrgansDonationApp.Models.AutoMapper
 
             CreateMap<DonationCenter, DonationCenterResponse>()
                 .ForMember(dcr => dcr.DonationTypes, x => x.MapFrom(src =>
-                    src.DonationCenterDonationTypes.Select(j => j.DonationType)));
+                    src.DonationCenterDonationTypes.Select(j => j.DonationType).ToList()));
 
             CreateMap<DonationType, DonationTypeResponse>();
         }

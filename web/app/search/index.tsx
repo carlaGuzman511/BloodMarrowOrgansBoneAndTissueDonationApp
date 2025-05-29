@@ -1,7 +1,8 @@
 import { Link } from "expo-router";
 import { View, Text, Button } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Search from "@/screens/Search";
+import SearchDonationCenters from "@/screens/SearchDonationCenters";
+import SearchUsers from "@/screens/SearchUsers";
 
 export default function SearchScreen() {
   return (
@@ -13,7 +14,7 @@ export default function SearchScreen() {
           alignItems: "center",
         }}
       >
-        <Search/>
+        <SearchDonationCenters/>
         {/*
         <Link 
           href="/search/A"

@@ -11,7 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const Home = () => {
     const [data, setData] = useState<any[]>([]);
-    const API_URL = 'http://192.168.150.5:7140/donationTypes';
+    const API_URL = 'http://192.168.150.5:7140/api/donation-types';
     const router = useRouter();
 
     useEffect(() => {

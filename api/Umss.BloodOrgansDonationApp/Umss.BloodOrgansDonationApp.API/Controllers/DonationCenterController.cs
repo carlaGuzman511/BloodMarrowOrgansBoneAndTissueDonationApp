@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
@@ -18,6 +19,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             _donationCenterService = donationCenterService;
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<DonationCenterResponse>> Get(Guid id)
         {
@@ -41,6 +43,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DonationCenterResponse>>> Get()
         {
@@ -59,6 +62,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         internal async Task<ActionResult> Delete(Guid id)
         {
@@ -84,6 +88,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<DonationCenterResponse>> Create([FromBody] DonationCenterRequest donationCenterRequest)
         {
@@ -102,6 +107,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<DonationCenterResponse>> Update(Guid id, [FromBody] DonationCenterRequest donationCenterRequest)
         {

@@ -4,7 +4,7 @@ using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.Repository
 {
-    public class CommentRepository : ICommentRepository<Comment>
+    public class CommentRepository : ICommentRepository
     {
         private readonly DonationAppContext _appContext;
         public CommentRepository(DonationAppContext appContext)

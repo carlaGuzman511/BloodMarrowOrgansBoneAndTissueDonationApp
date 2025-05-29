@@ -15,7 +15,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         public DonationTypeServiceTest(RepositoryFixture repositoryFixture)
         {
             this.repositoryFixture = repositoryFixture;
-            this.donationTypeService = new DonationTypeService(this.repositoryFixture.DonationTypeRepository);
+            this.donationTypeService = new DonationTypeService(this.repositoryFixture.DonationTypeRepository, this.repositoryFixture.Mapper);
         }
         private IEnumerable<DonationType> GetDonationTypes() 
         {

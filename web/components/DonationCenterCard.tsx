@@ -10,7 +10,7 @@ type Props = {
     item: DonationCenter
 }
 
-const DonationCenterCard = ({item}: Props) => {
+const DonationCenterCard = ({ item }: Props) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     return(

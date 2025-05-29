@@ -10,11 +10,11 @@ using Umss.BloodOrgansDonationApp.Services.Validators;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
-    public class DonationPostService : IDonationPostService<DonationPostRequest, DonationPostResponse>
+    public class DonationPostService : IDonationPostService
     {
-        private readonly IDonationPostRepository<DonationPost> _donationPostRepository;
+        private readonly IDonationPostRepository _donationPostRepository;
         private readonly IMapper _mapper;
-        public DonationPostService(IDonationPostRepository<DonationPost> donationPostRepository, IMapper mapper)
+        public DonationPostService(IDonationPostRepository donationPostRepository, IMapper mapper)
         {
             _donationPostRepository = donationPostRepository;
             _mapper = mapper;

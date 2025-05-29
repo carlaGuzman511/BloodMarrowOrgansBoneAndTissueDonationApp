@@ -1,6 +1,9 @@
+using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
+
 namespace Umss.BloodOrgansDonationApp.Services.Interfaces
 {
-    public interface ICommentService<CommentRequest, CommentResponse>
+    public interface ICommentService
     {
         public Task<IEnumerable<CommentResponse>> Get(Guid DonationPostId);
         public Task<CommentResponse?> Get(Guid DonationPostId, Guid commentId);

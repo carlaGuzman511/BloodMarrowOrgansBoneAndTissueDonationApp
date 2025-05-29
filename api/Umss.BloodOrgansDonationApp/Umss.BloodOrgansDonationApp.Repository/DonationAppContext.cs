@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Models.Entities;
 
 namespace Umss.BloodOrgansDonationApp.Repository
 {
-    public class DonationAppContext : DbContext
+    public class DonationAppContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public DonationAppContext(DbContextOptions<DonationAppContext> options) : base(options) { }
         public DbSet<BloodType> BloodTypes { get; set; }
@@ -16,6 +18,8 @@ namespace Umss.BloodOrgansDonationApp.Repository
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<DonationPost>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.DonationPosts)

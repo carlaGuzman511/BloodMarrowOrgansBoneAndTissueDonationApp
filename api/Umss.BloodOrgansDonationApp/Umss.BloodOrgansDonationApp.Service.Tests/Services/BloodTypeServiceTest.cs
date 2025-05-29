@@ -12,7 +12,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         public BloodTypeServiceTest(RepositoryFixture repositoryFixture)
         {
             this.repositoryFixture = repositoryFixture;
-            this.bloodTypeService = new BloodTypeService(repositoryFixture.BloodTypeRepository);
+            this.bloodTypeService = new BloodTypeService(repositoryFixture.BloodTypeRepository, repositoryFixture.Mapper);
         }
         private IEnumerable<BloodType> GetBloodTypes()
         {

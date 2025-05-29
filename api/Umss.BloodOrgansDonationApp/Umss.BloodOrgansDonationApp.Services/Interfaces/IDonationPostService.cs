@@ -1,6 +1,9 @@
-﻿namespace Umss.BloodOrgansDonationApp.Services.Interfaces
+﻿using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
+
+namespace Umss.BloodOrgansDonationApp.Services.Interfaces
 {
-    public interface IDonationPostService<DonationPostRequest, DonationPostResponse>
+    public interface IDonationPostService
     {
         public Task<IEnumerable<DonationPostResponse>> GetByDonationCenter(Guid donationCenterId);
         public Task<DonationPostResponse?> GetByDonationCenter(Guid donationCenterId, Guid DonationPostId);

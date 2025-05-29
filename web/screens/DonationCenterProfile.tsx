@@ -6,17 +6,37 @@ import MapView, { Marker, Polyline }from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
+import { useRouter } from 'expo-router';
+import axios from "axios";
 
-const DonationCenterProfile = () => {
+
+const DonationCenterProfile = ({}) => {
+    const [data, setData] = useState<any[]>([]);
+        const API_URL = 'http://192.168.150.5:7140/api/donation-centers';
+        const router = useRouter();
+    
+        useEffect(() => {
+          fetchData();
+        }, []);
+    
+        const fetchData = async () => {
+          try {
+            const response = await axios.get(API_URL);
+            setData(response.data);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
     const [origin, setOrigin] = useState<any>({
         latitude: -17.38524,
         longitude: -66.14841,
-      });
+    });
     
-      const [destination, setDestination] = useState<any>({
+    const [destination, setDestination] = useState<any>({
         latitude: -17.388818852963695,
         longitude: -66.2053439788403,
-      });
+    });
 
     const onHeaderPress = () => {
         // navigation.navigate('Home');

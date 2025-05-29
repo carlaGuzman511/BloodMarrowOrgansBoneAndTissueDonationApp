@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Umss.BloodOrgansDonationApp.Models.Exceptions;
 using Umss.BloodOrgansDonationApp.Models.Requests;
@@ -11,13 +12,14 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
     [Route("api")]
     public class DonationPostController: ControllerBase
     {
-        private readonly IDonationPostService<DonationPostRequest, DonationPostResponse> _DonationPostService;
+        private readonly IDonationPostService _DonationPostService;
 
-        public DonationPostController(IDonationPostService<DonationPostRequest, DonationPostResponse> DonationPostService)
+        public DonationPostController(IDonationPostService DonationPostService)
         {
             _DonationPostService = DonationPostService;
         }
 
+        [Authorize]
         [HttpGet("users/{userId}/donation-posts/{donationPostId}")]
         public async Task<ActionResult<DonationPostResponse>> GetByUser(Guid userId, Guid donationPostId)
         {
@@ -41,6 +43,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("users/{userId}/donation-posts/{donationPostId}")]
         public async Task<ActionResult> DeleteByUser(Guid userId, Guid donationPostId)
         {
@@ -65,6 +68,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("users/{userId}/donation-posts")]
         public async Task<ActionResult<IEnumerable<DonationPostResponse>>> GetByUser(Guid userId)
         {
@@ -83,6 +87,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("users/{userId}/donation-posts")]
         public async Task<ActionResult<DonationPostResponse>> CreateByUser(Guid userId, [FromBody] DonationPostRequest donationPostRequest)
         {
@@ -101,6 +106,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("users/{userId}/donation-posts/{donationPostId}")]
         public async Task<ActionResult<DonationPostResponse>> UpdateByUser(Guid userId, Guid donationPostId, [FromBody] DonationPostRequest donationPostRequest)
         {
@@ -123,6 +129,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("donation-centers/{donationCenterId}/donation-posts/{donationPostId}")]
         public async Task<ActionResult<DonationPostResponse>> GetByDonationCenter(Guid donationCenterId, Guid donationPostId)
         {
@@ -146,6 +153,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("donation-centers/{donationCenterId}/donation-posts/{donationPostId}")]
         public async Task<ActionResult> DeleteByDonationCenter(Guid donationCenterId, Guid donationPostId)
         {
@@ -170,6 +178,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("donation-centers/{donationCenterId}/donation-posts")]
         public async Task<ActionResult<IEnumerable<DonationPostResponse>>> GetByDonationCenter(Guid donationCenterId)
         {
@@ -188,6 +197,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("donation-centers/{donationCenterId}/donation-posts")]
         public async Task<ActionResult<DonationPostResponse>> CreateByDonationCenter(Guid donationCenterId, [FromBody] DonationPostRequest donationPostRequest)
         {
@@ -206,6 +216,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("donation-centers/{donationCenterId}/donation-posts/{donationPostId}")]
         public async Task<ActionResult<DonationPostResponse>> UpdateByDonationCenter(Guid donationCenterId, Guid donationPostId, [FromBody] DonationPostRequest donationPostRequest)
         {

@@ -1,6 +1,8 @@
-﻿namespace Umss.BloodOrgansDonationApp.Repository.Interfaces
+﻿using Umss.BloodOrgansDonationApp.Models.Entities;
+
+namespace Umss.BloodOrgansDonationApp.Repository.Interfaces
 {
-    public interface ICommentRepository<Comment>
+    public interface ICommentRepository
     {
         public Task<IEnumerable<Comment>> Get(Guid donationPostId);
         public Task<Comment?> Get(Guid donationPostId, Guid commentId);

@@ -5,19 +5,15 @@ import { FlatList } from 'react-native-gesture-handler';
 import Header from '@/components/Header';
 import SearcherBar from '@/components/SearcherBar';
 import UserCard from '@/components/UserCard';
-import { DonationCenter, User } from '@/models/App.types';
+import { User } from '@/models/App.types';
 import axios from "axios";
-import DonationCenterCard from '@/components/DonationCenterCard';
 
-const Search = () => {
+const SearchUsers = () => {
     const USERS_API_URL = 'http://192.168.150.5:7140/users';
-    const DONATION_CENTERS_API_URL = 'http://192.168.150.5:7140/donationCenters';
     const [search, setSearch] = useState('');
     const [users, setUsers] = useState<User[]>([]);
-    const [donationCenters, setDonationCenters] = useState<DonationCenter[]>([]);
     const [filteredUsers, setFilteredUsers] = useState(users);
-    const [filteredDonationCenters, setFilteredDonationCenters] = useState(donationCenters);
-
+    
     const handleSearchUsersByName = (data: string) => {
         setSearch(data);
         const filteredData = users.filter((user: User) => {
@@ -34,25 +30,8 @@ const Search = () => {
         setFilteredUsers(filteredData);
     }
 
-    const handleSearchDonationCentersByName = (data: string) => {
-        setSearch(data);
-        const filteredData = donationCenters.filter((donationCenter: DonationCenter) => {
-            return donationCenter.name.toLowerCase().includes(data.toLowerCase());
-        })
-        setFilteredDonationCenters(filteredData);
-    }
-
-    const handleSearchDonationCentersByAddress = (data: string) => {
-        setSearch(data);
-        const filteredData = donationCenters.filter((donationCenter: DonationCenter) => {
-            return donationCenter.address.toLowerCase().includes(data.toLowerCase());
-        })
-        setFilteredDonationCenters(filteredData);
-    }
-
     useEffect(() => {
         fetchUsers();
-        fetchDonationCenters();
     }, []);
 
     const fetchUsers = async () => {
@@ -65,41 +44,18 @@ const Search = () => {
         }
     };
 
-    const fetchDonationCenters = async () => {
-        try {
-            const response = await axios.get(DONATION_CENTERS_API_URL);
-            setDonationCenters(response.data);
-        }
-        catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
     const renderUsersList = () => {
         return(
             <FlatList
                 data={filteredUsers}
                 renderItem={(item: any) => (<UserCard item={item.item}/>)}
-                keyExtractor={(item: User) => item.id.toString()}
+                keyExtractor={(item: User) => item.id?.toString()}
                 contentContainerStyle={{
                     flexGrow: 1,
                 }}
                 onEndReached={() => {}}
                 onEndReachedThreshold={0.2}
                 showsVerticalScrollIndicator={false}
-            />
-        );
-    }
-
-    const renderDonationCentersList = () => {
-        return(
-            <FlatList
-                data={filteredDonationCenters}
-                renderItem={(item: any) => (<DonationCenterCard item={item.item}/>)}
-                keyExtractor={(item: DonationCenter) => item.id.toString()}
-                contentContainerStyle={{
-                    flexGrow: 1,
-                }}
             />
         );
     }
@@ -124,14 +80,11 @@ const Search = () => {
                     name='Search'
                     onPress={onPressHeader}
                 />
-                {/* {<SearcherBar search={search} handleSearch={handleSearchUsersByName}/>}
-                {renderUsersList()} */}
-                
-                {<SearcherBar search={search} handleSearch={handleSearchDonationCentersByName}/>}
-                {renderDonationCentersList()}
+                {<SearcherBar search={search} handleSearch={handleSearchUsersByName}/>}
+                {renderUsersList()}
             </View>
         </SafeAreaView>
     )
 }
 
-export default Search;
+export default SearchUsers;

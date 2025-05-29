@@ -3,6 +3,7 @@ using FluentValidation;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Umss.BloodOrgansDonationApp.API.Controllers
 {
@@ -10,13 +11,14 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
     [Route("api/posts")]
     public class CommentController: ControllerBase
     {
-        private readonly ICommentService<CommentRequest, CommentResponse> _commentService;
+        private readonly ICommentService _commentService;
 
-        public CommentController(ICommentService<CommentRequest, CommentResponse> commentService)
+        public CommentController(ICommentService commentService)
         {
             _commentService = commentService;
         }
 
+        [Authorize]
         [HttpGet("{donationPostId}/comments/{commentId}")]
         public async Task<ActionResult<CommentResponse>> Get(Guid donationPostId, Guid commentId)
         {
@@ -40,6 +42,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{donationPostId}/comments")]
         public async Task<ActionResult<IEnumerable<CommentResponse>>> Get(Guid donationPostId)
         {
@@ -58,6 +61,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{donationPostId}/comments/{commentId}")]
         public async Task<ActionResult> Delete(Guid donationPostId, Guid commentId)
         {
@@ -81,7 +85,8 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
-        
+
+        [Authorize]
         [HttpPut("{donationPostId}/comments/{commentId}")]
         public async Task<ActionResult<CommentResponse>> Update(Guid donationPostId, Guid commentId, [FromBody] CommentRequest commentRequest)
         {
@@ -104,6 +109,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("{donationPostId}/comments")]
         public async Task<ActionResult<CommentResponse>> Create(Guid donationPostId, [FromBody] CommentRequest commentRequest)
         {

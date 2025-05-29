@@ -11,6 +11,12 @@ namespace Umss.BloodOrgansDonationApp.Repository
         {
             _appContext = appContext;
         }
+
+        public Task<bool> CheckPasswordAsync(User user, string password)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User> Create(User element)
         {
             await _appContext.AddAsync(element);
@@ -37,6 +43,16 @@ namespace Umss.BloodOrgansDonationApp.Repository
         public async Task<IEnumerable<User>> GetAll()
         {
             return await _appContext.Users.ToListAsync();
+        }
+
+        public Task<User> GetByUsernameAsync(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IList<string>> GetRolesAsync(User user)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<User> Update(User element)

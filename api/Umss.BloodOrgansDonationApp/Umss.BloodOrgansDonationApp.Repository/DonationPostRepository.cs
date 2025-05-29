@@ -4,7 +4,7 @@ using Umss.BloodOrgansDonationApp.Models;
 
 namespace Umss.BloodOrgansDonationApp.Repository
 {
-    public class DonationPostRepository : IDonationPostRepository<DonationPost>
+    public class DonationPostRepository : IDonationPostRepository
     {
         private readonly DonationAppContext _appContext;
 

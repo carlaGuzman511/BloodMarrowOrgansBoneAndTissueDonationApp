@@ -1,6 +1,7 @@
 ﻿using Moq;
 using Umss.BloodOrgansDonationApp.Models;
 using Umss.BloodOrgansDonationApp.Models.Requests;
+using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Service.Tests.Utilities;
 using Umss.BloodOrgansDonationApp.Services;
 
@@ -13,20 +14,20 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         public DonationCenterServiceTest(RepositoryFixture repositoryFixture)
         {
             this.repositoryFixture = repositoryFixture;
-            this.donationCenterService = new DonationCenterService(repositoryFixture.DonationCenterRepository);
+            this.donationCenterService = new DonationCenterService(repositoryFixture.DonationCenterRepository, repositoryFixture.DonationTypeRepository, repositoryFixture.Mapper);
         }
 
         private IEnumerable<DonationCenter> GetDonationCenters()
         {
             DonationCenter[] donationCenters = new DonationCenter[8] {
-                new DonationCenter { Id = Guid.NewGuid(), Name = "Viedma Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
-                new DonationCenter { Id = Guid.NewGuid(), Name = "Belga Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
-                new DonationCenter { Id = Guid.NewGuid(), Name = "Univalle Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
-                new DonationCenter { Id = Guid.NewGuid(), Name = "ProSalud Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
-                new DonationCenter { Id = Guid.NewGuid(), Name = "Materno Infantil Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
-                new DonationCenter { Id = Guid.NewGuid(), Name = "Obrero Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
-                new DonationCenter { Id = Guid.NewGuid(), Name = "Cotahuma Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
-                new DonationCenter { Id = Guid.NewGuid(), Name = "Clinicas Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" },
+                new DonationCenter { Id = Guid.NewGuid(), Name = "Viedma Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia", Latitude = 17.525, Longitude = 12.2555 },
+                new DonationCenter { Id = Guid.NewGuid(), Name = "Belga Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia", Latitude = 17.525, Longitude = 12.2555 },
+                new DonationCenter { Id = Guid.NewGuid(), Name = "Univalle Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia", Latitude = 17.525, Longitude = 12.2555 },
+                new DonationCenter { Id = Guid.NewGuid(), Name = "ProSalud Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" , Latitude = 17.525, Longitude = 12.2555},
+                new DonationCenter { Id = Guid.NewGuid(), Name = "Materno Infantil Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia", Latitude = 17.525, Longitude = 12.2555 },
+                new DonationCenter { Id = Guid.NewGuid(), Name = "Obrero Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia", Latitude = 17.525, Longitude = 12.2555 },
+                new DonationCenter { Id = Guid.NewGuid(), Name = "Cotahuma Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia", Latitude = 17.525, Longitude = 12.2555 },
+                new DonationCenter { Id = Guid.NewGuid(), Name = "Clinicas Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia", Latitude = 17.525, Longitude = 12.2555 },
             };
 
             return donationCenters;
@@ -34,7 +35,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
 
         private DonationCenter GetDonationCenter()
         {
-            var donationCenter = new DonationCenter { Id = Guid.NewGuid(), Name = "Viedma Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" };
+            var donationCenter = new DonationCenter { Id = Guid.NewGuid(), Name = "Viedma Hospital", Address = "Av Blanco Galindo Km 6", City = "Cochabamba - Bolivia" , Latitude = 17.525, Longitude = 12.2555 };
 
             return donationCenter;
         }
@@ -46,7 +47,8 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
                 Name = "Viedma Hospital",
                 Address = "Av. Blanco Galindo Km 6",
                 City = "Cochabamba - Bolivia",
-                DonationTypes = new List<DonationType>(),
+                Latitude = 17.525,
+                Longitude = 12.2555,
             };
 
             return donationCenterRequest;
@@ -74,7 +76,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         public async void Create()
         {
             this.repositoryFixture.DonationCenterRepositoryMock.Setup(x => x.Create(It.IsAny<DonationCenter>())).ReturnsAsync(this.GetDonationCenter);
-            DonationCenter donationCenter = await this.donationCenterService.Create(this.GetDonationCenterRequest());
+            DonationCenterResponse donationCenter = await this.donationCenterService.Create(this.GetDonationCenterRequest());
 
             Assert.NotNull(donationCenter);
         }
@@ -82,7 +84,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         [Fact]
         public async void Delete()
         {
-            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>()));
+            this.repositoryFixture.CommentRepositoryMock.Setup(x => x.Delete(It.IsAny<Guid>(), It.IsAny<Guid>()));
             await this.donationCenterService.Delete(Guid.NewGuid());
         }
 
@@ -91,7 +93,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         {
             this.repositoryFixture.DonationCenterRepositoryMock.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(this.GetDonationCenter());
             this.repositoryFixture.DonationCenterRepositoryMock.Setup(x => x.Update(It.IsAny<DonationCenter>())).ReturnsAsync(this.GetDonationCenter());
-            DonationCenter donationCenter = await this.donationCenterService.Update(Guid.NewGuid(), this.GetDonationCenterRequest());
+            DonationCenterResponse donationCenter = await this.donationCenterService.Update(Guid.NewGuid(), this.GetDonationCenterRequest());
 
             Assert.NotNull(donationCenter);
         }
