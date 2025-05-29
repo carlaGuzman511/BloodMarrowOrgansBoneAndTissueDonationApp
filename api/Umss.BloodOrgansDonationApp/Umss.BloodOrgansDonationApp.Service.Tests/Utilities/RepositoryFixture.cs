@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Moq;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
+using Umss.BloodOrgansDonationApp.Services.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.Service.Tests.Utilities
 {
@@ -13,6 +14,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Utilities
         protected internal Mock<IBloodTypeRepository> BloodTypeRepositoryMock { get; }
         protected internal Mock<IDonationCenterRepository> DonationCenterRepositoryMock { get; }
         protected internal Mock<IMapper> MapperMock { get; }
+        protected internal Mock<ITokenService> tokenServiceMock { get; }
 
         protected internal IUserRepository UserRepository { get; }
         protected internal ICommentRepository CommentRepository { get; }
@@ -21,6 +23,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Utilities
         protected internal IBloodTypeRepository BloodTypeRepository { get; }
         protected internal IDonationCenterRepository DonationCenterRepository { get; }
         protected internal IMapper Mapper { get; }
+        protected internal ITokenService tokenService; {  get; }
 
         public RepositoryFixture()
         {
@@ -44,6 +47,9 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Utilities
 
             this.MapperMock = new Mock<IMapper>();
             this.Mapper = this.MapperMock.Object;
+
+            this.tokenServiceMock = new Mock<ITokenService>();
+            this.tokenService = this.tokenServiceMock.Object;
         }
     }
 }

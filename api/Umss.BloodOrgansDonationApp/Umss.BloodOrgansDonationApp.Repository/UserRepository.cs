@@ -1,20 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Umss.BloodOrgansDonationApp.Repository.Interfaces;
 using Umss.BloodOrgansDonationApp.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Umss.BloodOrgansDonationApp.Repository
 {
     public class UserRepository : IUserRepository
     {
         private readonly DonationAppContext _appContext;
-        public UserRepository(DonationAppContext appContext)
+        private readonly UserManager<User> _userManager;
+        public UserRepository(DonationAppContext appContext, UserManager<User> userManager)
         {
             _appContext = appContext;
+            _userManager = userManager;
+
         }
 
-        public Task<bool> CheckPasswordAsync(User user, string password)
+        public async Task<bool> CheckPasswordAsync(User user, string password)
         {
-            throw new NotImplementedException();
+            return await _userManager.CheckPasswordAsync(user, password);
         }
 
         public async Task<User> Create(User element)
@@ -45,20 +49,20 @@ namespace Umss.BloodOrgansDonationApp.Repository
             return await _appContext.Users.ToListAsync();
         }
 
-        public Task<User> GetByUsernameAsync(string username)
+        public async Task<User?> GetByEmailAsync(string email)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<string>> GetRolesAsync(User user)
-        {
-            throw new NotImplementedException();
+            return await _userManager.FindByEmailAsync(email);
         }
 
         public async Task<User> Update(User element)
         {
             await _appContext.SaveChangesAsync();
             return element;
+        }
+
+        public async Task<IEnumerable<string>> GetRolesAsync(User user)
+        {
+            return await _userManager.GetRolesAsync(user);
         }
     }
 }

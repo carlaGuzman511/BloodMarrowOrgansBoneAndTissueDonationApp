@@ -4,10 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Umss.BloodOrgansDonationApp.Models;
+using Umss.BloodOrgansDonationApp.Services.Interfaces;
 
 namespace Umss.BloodOrgansDonationApp.Services
 {
-    public class TokenService
+    public class TokenService: ITokenService
     {
         private readonly IConfiguration _config;
 
@@ -16,12 +17,13 @@ namespace Umss.BloodOrgansDonationApp.Services
             _config = config;
         }
 
-        public string CreateToken(User user, IList<string> roles)
+        public string CreateToken(User user, IEnumerable<string> roles)
         {
-            var claims = new List<Claim>
+            List<Claim> claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.UserName)
+            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+            new(ClaimTypes.Name, user.UserName ?? "")
         };
 
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

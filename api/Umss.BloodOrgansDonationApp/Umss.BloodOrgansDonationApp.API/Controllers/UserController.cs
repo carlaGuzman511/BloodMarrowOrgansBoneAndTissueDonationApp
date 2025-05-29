@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Azure.Core;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Umss.BloodOrgansDonationApp.Models.Exceptions;
@@ -129,11 +130,14 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest loginRequest)
+        public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest loginRequest)
         {
             try
             {
-                LoginResponse response = await _userService.LoginAsync(loginRequest);
+                AuthResponse response = await _userService.LoginAsync(loginRequest);
+                if (response == null)
+                    return Unauthorized("Invalid credentials");
+
                 return StatusCode(StatusCodes.Status200OK, response);
             }
             catch (ValidationException exception)

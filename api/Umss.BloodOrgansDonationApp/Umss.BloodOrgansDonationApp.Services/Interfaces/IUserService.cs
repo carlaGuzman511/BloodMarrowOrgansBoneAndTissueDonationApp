@@ -5,6 +5,6 @@ namespace Umss.BloodOrgansDonationApp.Services.Interfaces
 {
     public interface IUserService: IDonationAppService<UserRequest, UserResponse>
     {
-        Task<LoginResponse> LoginAsync(LoginRequest loginRequest);
+        Task<AuthResponse> LoginAsync(LoginRequest loginRequest);
     }
 }

@@ -14,10 +14,12 @@ namespace Umss.BloodOrgansDonationApp.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        private readonly ITokenService _tokenService;
+        public UserService(IUserRepository userRepository, IMapper mapper, ITokenService tokenService)
         {
             this._userRepository = userRepository;
             _mapper = mapper;
+            _tokenService = tokenService;
         }
         public async Task<UserResponse> Create(UserRequest userRequest)
         {
@@ -58,9 +60,28 @@ namespace Umss.BloodOrgansDonationApp.Services
             return response;
         }
 
-        public Task<LoginResponse> LoginAsync(LoginRequest loginRequest)
+        public async Task<AuthResponse> LoginAsync(LoginRequest loginRequest)
         {
-            throw new NotImplementedException();
+            User? user = await _userRepository.GetByEmailAsync(loginRequest.Email);
+            if (user == null)
+            {
+                throw new EntityNotFoundException($"User with Email {loginRequest.Email} not found.");
+            }
+
+            bool result = await _userRepository.CheckPasswordAsync(user, loginRequest.Password);
+            if (!result)
+            {
+                throw new EntityNotFoundException($"User password is incorrect.");
+            }
+
+            var roles = await _userRepository.GetRolesAsync(user);
+            var token = _tokenService.CreateToken(user, roles);
+
+            return new AuthResponse
+            {
+                Token = token,
+                Expiration = DateTime.UtcNow.AddMinutes(30)
+            };
         }
 
         public async Task<UserResponse> Update(Guid id, UserRequest userRequest)

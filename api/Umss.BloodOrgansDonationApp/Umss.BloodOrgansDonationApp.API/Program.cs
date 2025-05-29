@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(options => {
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<IDonationCenterRepository, DonationCenterRepository>();
 builder.Services.AddScoped<IBloodTypeRepository, BloodTypeRepository>();

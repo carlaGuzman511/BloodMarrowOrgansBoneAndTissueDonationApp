@@ -4,8 +4,8 @@ namespace Umss.BloodOrgansDonationApp.Repository.Interfaces
 {
     public interface IUserRepository: IDonationAppRepository<User>
     {
-        Task<User> GetByUsernameAsync(string username);
+        Task<User?> GetByEmailAsync(string email);
         Task<bool> CheckPasswordAsync(User user, string password);
-        Task<IList<string>> GetRolesAsync(User user);
+        Task<IEnumerable<string>> GetRolesAsync(User user);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Moq;
 using Umss.BloodOrgansDonationApp.Models;
-using Umss.BloodOrgansDonationApp.Models.Entities;
 using Umss.BloodOrgansDonationApp.Models.Requests;
 using Umss.BloodOrgansDonationApp.Models.Responses;
 using Umss.BloodOrgansDonationApp.Service.Tests.Utilities;
@@ -16,7 +15,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Services
         public UserServiceTest(RepositoryFixture repositoryFixture)
         {
             this.repositoryFixture = repositoryFixture;
-            this.userService = new UserService(this.repositoryFixture.UserRepository, this.repositoryFixture.Mapper);
+            this.userService = new UserService(this.repositoryFixture.UserRepository, this.repositoryFixture.Mapper, this.repositoryFixture.tokenService);
         }
         private IEnumerable<UserResponse> GetUserResponses()
         {
