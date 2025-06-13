@@ -1,18 +1,19 @@
 import {View, Image, Text, TouchableOpacity, ListRenderItem, FlatList } from 'react-native'
-import React, {useEffect, useState} from 'react'
+import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { COLORS } from '@/constants'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { SIZES, FONTS } from '@/constants';
+import { SIZES } from '@/constants';
 import axios from "axios";
 import { Donation } from '@/models/App.types';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useInformationContext } from './../app/information/context';
 
 const Home = () => {
-    const [data, setData] = useState<any[]>([]);
-    const API_URL = 'http://192.168.150.5:7140/api/donation-types';
+    const API_URL = 'http://192.168.0.5:7140/api/donation-types';
     const router = useRouter();
+    const [state, actions] = useInformationContext();
 
     useEffect(() => {
       fetchData();
@@ -21,9 +22,9 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(API_URL);
-        setData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        actions.onGetInformation({ information: response.data });
+      } catch (error: any) {
+        console.error('Error fetching information module:', error?.message);
       }
     };
 
@@ -151,7 +152,7 @@ const Home = () => {
             }}
         >
             <FlatList
-                data={data}
+                data={state.information}
                 keyExtractor={(item: Donation) => item.id.toString()}
                 renderItem={renderItem}
                 showsVerticalScrollIndicator={false}

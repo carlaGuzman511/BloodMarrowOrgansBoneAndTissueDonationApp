@@ -13,6 +13,7 @@ namespace Umss.BloodOrgansDonationApp.Services.Interfaces
 
         public Task<IEnumerable<DonationPostResponse>> GetByUser(Guid userId);
         public Task<DonationPostResponse?> GetByUser(Guid userId, Guid DonationPostId);
+        public Task<IEnumerable<DonationPostResponse>> Get();
         public Task<DonationPostResponse> CreateByUser(Guid userId, DonationPostRequest donationPostRequest);
         public Task<DonationPostResponse> UpdateByUser(Guid userId, Guid DonationPostId, DonationPostRequest donationPostRequest);
         public Task DeleteByUser(Guid userId, Guid DonationPostId);

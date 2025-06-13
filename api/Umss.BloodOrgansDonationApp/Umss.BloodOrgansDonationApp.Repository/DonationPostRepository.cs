@@ -47,6 +47,17 @@ namespace Umss.BloodOrgansDonationApp.Repository
                 .Include(dp => dp.Comments)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<DonationPost>> Get()
+        {
+            return await _appContext.DonationPosts
+                .Include(dp => dp.BloodType)
+                .Include(dp => dp.DonationType)
+                .Include(dp => dp.User)
+                .Include(dp => dp.DonationCenter)
+                .Include(dp => dp.Comments)
+                .ToListAsync();
+        }
         public async Task<DonationPost?> GetByDonationCenter(Guid donationCenterId, Guid donationPostId)
         {
             return await _appContext.DonationPosts

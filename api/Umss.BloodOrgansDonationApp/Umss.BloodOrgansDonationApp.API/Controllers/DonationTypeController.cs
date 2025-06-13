@@ -68,7 +68,7 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DonationTypeResponse>>> Get()
         {

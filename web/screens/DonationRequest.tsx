@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import {
   View,
@@ -7,11 +7,12 @@ import {
 } from "react-native";
 import DonationCard from "@/components/DonationCard";
 import { DonationPost } from "@/models/App.types";
+import { useHomeContext } from "@/app/home/context";
 
 const DonationRequest = () => {
-    const [data, setData] = useState<DonationPost[]>([]);
-    const API_URL = 'http://192.168.150.5:7140/donationPosts';
-      
+    const API_URL = 'http://192.168.0.5:7140/api/donation-posts';
+    const [state, actions] = useHomeContext();
+
     useEffect(() => {
       fetchData();
     }, []);
@@ -19,9 +20,9 @@ const DonationRequest = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(API_URL);
-        setData(response.data);
+        actions.onGetDonationPosts({ donationPosts: response.data });
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching donation posts:', error);
       }
     };
 
@@ -35,8 +36,8 @@ const DonationRequest = () => {
     return (
         <View style={{ flex: 1, paddingHorizontal: 22 }}>
             <FlatList
-              data={data}
-              keyExtractor={(item: DonationPost) => item.id.toString()}
+              data={state.donationPosts}
+              // keyExtractor={(item: DonationPost) => item.id?.toString()}
               renderItem={renderItem}
               showsVerticalScrollIndicator={false}
               onEndReachedThreshold={0.2}

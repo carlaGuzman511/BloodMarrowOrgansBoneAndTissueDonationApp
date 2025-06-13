@@ -7,7 +7,7 @@
         public Guid BloodTypeId { get; set; }
         public required string Password { get; set; }
         public required string Address { get; set; }
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public required string PhoneNumber { get; set; }
         public required string Image { get; set; }
         public required double Latitude { get; set; }

@@ -43,6 +43,30 @@ namespace Umss.BloodOrgansDonationApp.API.Controllers
             }
         }
 
+        //[Authorize]
+        [HttpGet("donation-posts")]
+        public async Task<ActionResult<IEnumerable<DonationPostResponse>>> Get()
+        {
+            try
+            {
+                IEnumerable<DonationPostResponse> response = await _DonationPostService.Get();
+                if (response.Count() == 0)
+                {
+                    return NoContent();
+                }
+
+                return Ok(response);
+            }
+            catch (ValidationException exception)
+            {
+                return BadRequest(new { errors = exception.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
         [Authorize]
         [HttpDelete("users/{userId}/donation-posts/{donationPostId}")]
         public async Task<ActionResult> DeleteByUser(Guid userId, Guid donationPostId)

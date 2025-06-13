@@ -9,7 +9,7 @@ import { User } from '@/models/App.types';
 import axios from "axios";
 
 const SearchUsers = () => {
-    const USERS_API_URL = 'http://192.168.150.5:7140/users';
+    const USERS_API_URL = 'http://192.168.0.5:7140/api/users';
     const [search, setSearch] = useState('');
     const [users, setUsers] = useState<User[]>([]);
     const [filteredUsers, setFilteredUsers] = useState(users);

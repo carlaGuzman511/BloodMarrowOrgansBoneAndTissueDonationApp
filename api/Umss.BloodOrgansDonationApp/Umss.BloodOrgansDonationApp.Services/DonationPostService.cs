@@ -93,6 +93,14 @@ namespace Umss.BloodOrgansDonationApp.Services
 
             return response;
         }
+
+        public async Task<IEnumerable<DonationPostResponse>> Get()
+        {
+            IEnumerable<DonationPost> donationPosts = await _donationPostRepository.Get();
+            IEnumerable<DonationPostResponse> response = donationPosts.Select(dp => _mapper.Map<DonationPostResponse>(dp));
+
+            return response;
+        }
         public async Task<DonationPostResponse> UpdateByUser(Guid userId, Guid donationPostId, DonationPostRequest donationPostRequest)
         {
             DonationPost? donationPost = await _donationPostRepository.GetByUser(userId, donationPostId);

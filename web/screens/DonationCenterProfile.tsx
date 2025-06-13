@@ -12,7 +12,7 @@ import axios from "axios";
 
 const DonationCenterProfile = ({}) => {
     const [data, setData] = useState<any[]>([]);
-        const API_URL = 'http://192.168.150.5:7140/api/donation-centers';
+        const API_URL = 'http://192.168.0.5:7140/api/donation-centers';
         const router = useRouter();
     
         useEffect(() => {

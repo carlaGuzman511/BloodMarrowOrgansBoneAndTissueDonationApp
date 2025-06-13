@@ -23,7 +23,7 @@ namespace Umss.BloodOrgansDonationApp.Service.Tests.Utilities
         protected internal IBloodTypeRepository BloodTypeRepository { get; }
         protected internal IDonationCenterRepository DonationCenterRepository { get; }
         protected internal IMapper Mapper { get; }
-        protected internal ITokenService tokenService; {  get; }
+        protected internal ITokenService tokenService {  get; }
 
         public RepositoryFixture()
         {
